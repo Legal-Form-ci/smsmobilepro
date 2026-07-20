@@ -77,16 +77,29 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "SMS Pro Mobile — Plateforme SMS Marketing en Côte d'Ivoire" },
+      {
+        name: "description",
+        content:
+          "Plateforme professionnelle d'envoi de SMS marketing, alertes et API Gateway pour entreprises en Côte d'Ivoire et Afrique de l'Ouest.",
+      },
+      { name: "author", content: "SMS Pro Mobile" },
+      { property: "og:title", content: "SMS Pro Mobile — SMS Marketing Pro en Afrique de l'Ouest" },
+      {
+        property: "og:description",
+        content:
+          "Campagnes SMS marketing, SMS enrichi et API Gateway. Paiement Mobile Money. Propulsé par NM Technologie.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap",
+      },
       {
         rel: "stylesheet",
         href: appCss,
