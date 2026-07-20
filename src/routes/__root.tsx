@@ -84,14 +84,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Plateforme professionnelle d'envoi de SMS marketing, alertes et API Gateway pour entreprises en Côte d'Ivoire et Afrique de l'Ouest.",
       },
       { name: "author", content: "SMS Pro Mobile" },
-      { property: "og:title", content: "SMS Pro Mobile — SMS Marketing Pro en Afrique de l'Ouest" },
+      { property: "og:title", content: "SMS Pro Mobile — Plateforme SMS Marketing en Côte d'Ivoire" },
       {
         property: "og:description",
         content:
-          "Campagnes SMS marketing, SMS enrichi et API Gateway. Paiement Mobile Money. Propulsé par NM Technologie.",
+          "Plateforme professionnelle d'envoi de SMS marketing, alertes et API Gateway pour entreprises en Côte d'Ivoire et Afrique de l'Ouest.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "SMS Pro Mobile — Plateforme SMS Marketing en Côte d'Ivoire" },
+      { name: "twitter:description", content: "Plateforme professionnelle d'envoi de SMS marketing, alertes et API Gateway pour entreprises en Côte d'Ivoire et Afrique de l'Ouest." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/12a067c9-28eb-44c0-8708-20bebcfee801" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/12a067c9-28eb-44c0-8708-20bebcfee801" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -104,7 +108,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
     ],
   }),
   shellComponent: RootShell,
