@@ -1,10 +1,22 @@
 import { Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { Menu, X } from "lucide-react";
+import { track } from "@/lib/analytics";
+
+const NAV = [
+  { to: "/solutions", label: "Solutions" },
+  { to: "/tarifs", label: "Tarifs" },
+  { to: "/a-propos", label: "À propos" },
+  { to: "/contact", label: "Contact" },
+] as const;
 
 export function SiteHeader() {
+  const [open, setOpen] = useState(false);
+
   return (
     <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
       <div className="mx-auto max-w-6xl px-4 sm:px-8 py-3 flex items-center justify-between gap-3">
-        <Link to="/" className="flex flex-col leading-none shrink-0">
+        <Link to="/" className="flex flex-col leading-none shrink-0" onClick={() => setOpen(false)}>
           <span className="font-display font-black text-primary tracking-tighter text-lg sm:text-xl">
             SMS PRO
           </span>
@@ -12,29 +24,52 @@ export function SiteHeader() {
             Mobile CI
           </span>
         </Link>
+
         <div className="flex items-center gap-3 sm:gap-6 min-w-0">
           <div className="hidden md:flex items-center gap-6 text-sm font-semibold">
-            <Link to="/solutions" className="hover:text-primary transition-colors">
-              Solutions
-            </Link>
-            <Link to="/tarifs" className="hover:text-primary transition-colors">
-              Tarifs
-            </Link>
-            <Link to="/a-propos" className="hover:text-primary transition-colors">
-              À propos
-            </Link>
-            <Link to="/contact" className="hover:text-primary transition-colors">
-              Contact
-            </Link>
+            {NAV.map((n) => (
+              <Link key={n.to} to={n.to} className="hover:text-primary transition-colors">
+                {n.label}
+              </Link>
+            ))}
           </div>
+
           <Link
             to="/contact"
+            onClick={() => track("cta_signup_click", { location: "header" })}
             className="bg-primary text-primary-foreground px-3 sm:px-4 py-2 rounded-sm text-xs sm:text-sm font-semibold hover:bg-primary-dark transition-colors active:scale-95 shrink-0"
           >
             S'inscrire
           </Link>
+
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            className="md:hidden -mr-1 p-2 rounded-sm border border-border"
+            aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
+            aria-expanded={open}
+          >
+            {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </button>
         </div>
       </div>
+
+      {open && (
+        <div className="md:hidden border-t border-border bg-background">
+          <div className="mx-auto max-w-6xl px-4 py-3 flex flex-col gap-1">
+            {NAV.map((n) => (
+              <Link
+                key={n.to}
+                to={n.to}
+                onClick={() => setOpen(false)}
+                className="py-3 px-2 text-sm font-semibold hover:text-primary border-b border-border/60 last:border-b-0"
+              >
+                {n.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
@@ -43,8 +78,8 @@ export function SiteFooter() {
   return (
     <footer className="px-4 sm:px-8 py-12 bg-background border-t border-border">
       <div className="mx-auto max-w-6xl flex flex-col gap-8">
-        <div className="grid gap-8 sm:grid-cols-3">
-          <div>
+        <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4">
+          <div className="sm:col-span-2 md:col-span-1">
             <span className="font-display font-black text-primary tracking-tighter text-xl">
               SMS PRO
             </span>
@@ -87,10 +122,26 @@ export function SiteFooter() {
                 href="https://wa.me/2250700000000"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => track("cta_whatsapp_click", { location: "footer" })}
                 className="hover:text-primary"
               >
                 WhatsApp
               </a>
+            </li>
+          </ul>
+          <ul className="space-y-2 text-sm font-semibold">
+            <li className="text-[10px] font-mono uppercase tracking-widest text-foreground/40">
+              Légal
+            </li>
+            <li>
+              <Link to="/confidentialite" className="hover:text-primary">
+                Confidentialité
+              </Link>
+            </li>
+            <li>
+              <Link to="/conditions" className="hover:text-primary">
+                Conditions d'utilisation
+              </Link>
             </li>
           </ul>
         </div>
