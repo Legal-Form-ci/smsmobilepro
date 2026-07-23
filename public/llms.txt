@@ -1,0 +1,11 @@
+# SMS Pro Mobile
+
+> Plateforme SMS professionnelle pour entreprises en Côte d'Ivoire et Afrique de l'Ouest : marketing SMS, alertes transactionnelles et API Gateway.
+
+## Pages
+
+- [Accueil](/): Présentation de la plateforme SMS Pro Mobile.
+- [Solutions](/solutions): Marketing ciblé, SMS enrichi et API Gateway.
+- [Tarifs](/tarifs): Forfaits et paiement Mobile Money (Orange Money, MTN, Moov, Wave).
+- [À propos](/a-propos): NM Technologie et notre mission.
+- [Contact](/contact): Nous joindre par WhatsApp, téléphone ou email.
