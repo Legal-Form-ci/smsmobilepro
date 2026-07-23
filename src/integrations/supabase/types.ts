@@ -14,7 +14,81 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      analytics_events: {
+        Row: {
+          created_at: string
+          event_name: string
+          id: string
+          page_url: string | null
+          properties: Json
+          referrer: string | null
+          session_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_name: string
+          id?: string
+          page_url?: string | null
+          properties?: Json
+          referrer?: string | null
+          session_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_name?: string
+          id?: string
+          page_url?: string | null
+          properties?: Json
+          referrer?: string | null
+          session_id?: string | null
+        }
+        Relationships: []
+      }
+      contact_submissions: {
+        Row: {
+          company: string | null
+          created_at: string
+          email: string
+          id: string
+          ip_address: string | null
+          message: string
+          name: string
+          phone: string | null
+          source: string | null
+          status: string
+          subject: string
+          user_agent: string | null
+        }
+        Insert: {
+          company?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          ip_address?: string | null
+          message: string
+          name: string
+          phone?: string | null
+          source?: string | null
+          status?: string
+          subject: string
+          user_agent?: string | null
+        }
+        Update: {
+          company?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          ip_address?: string | null
+          message?: string
+          name?: string
+          phone?: string | null
+          source?: string | null
+          status?: string
+          subject?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
