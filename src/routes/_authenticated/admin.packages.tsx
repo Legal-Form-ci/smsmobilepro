@@ -19,7 +19,7 @@ export const Route = createFileRoute("/_authenticated/admin/packages")({
 });
 
 function empty() {
-  return { slug: "", name: "", price_fcfa: 0, sms_volume: 0, features: [] as string[], is_active: true, featured: false };
+  return { slug: "", name: "", price_fcfa: 0, sms_volume: 0, features: [] as string[], active: true, featured: false };
 }
 
 function PackagesAdmin() {
