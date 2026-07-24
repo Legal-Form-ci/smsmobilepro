@@ -15,8 +15,20 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ConfidentialiteRouteImport } from './routes/confidentialite'
 import { Route as ConditionsRouteImport } from './routes/conditions'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AProposRouteImport } from './routes/a-propos'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedDashboardOrdersRouteImport } from './routes/_authenticated/dashboard.orders'
+import { Route as AuthenticatedDashboardCampaignsRouteImport } from './routes/_authenticated/dashboard.campaigns'
+import { Route as AuthenticatedDashboardApiKeysRouteImport } from './routes/_authenticated/dashboard.api-keys'
+import { Route as ApiPublicWebhooksNmgroupeRouteImport } from './routes/api/public/webhooks/nmgroupe'
+import { Route as ApiPublicWebhooksFedapayRouteImport } from './routes/api/public/webhooks/fedapay'
+import { Route as ApiPublicWebhooksCinetpayRouteImport } from './routes/api/public/webhooks/cinetpay'
+import { Route as ApiPublicV1SmsRouteImport } from './routes/api/public/v1/sms'
+import { Route as AuthenticatedDashboardCheckoutSlugRouteImport } from './routes/_authenticated/dashboard.checkout.$slug'
 
 const TarifsRoute = TarifsRouteImport.update({
   id: '/tarifs',
@@ -48,9 +60,18 @@ const ConditionsRoute = ConditionsRouteImport.update({
   path: '/conditions',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AProposRoute = AProposRouteImport.update({
   id: '/a-propos',
   path: '/a-propos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -58,80 +79,211 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDashboardOrdersRoute =
+  AuthenticatedDashboardOrdersRouteImport.update({
+    id: '/orders',
+    path: '/orders',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardCampaignsRoute =
+  AuthenticatedDashboardCampaignsRouteImport.update({
+    id: '/campaigns',
+    path: '/campaigns',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardApiKeysRoute =
+  AuthenticatedDashboardApiKeysRouteImport.update({
+    id: '/api-keys',
+    path: '/api-keys',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const ApiPublicWebhooksNmgroupeRoute =
+  ApiPublicWebhooksNmgroupeRouteImport.update({
+    id: '/api/public/webhooks/nmgroupe',
+    path: '/api/public/webhooks/nmgroupe',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicWebhooksFedapayRoute =
+  ApiPublicWebhooksFedapayRouteImport.update({
+    id: '/api/public/webhooks/fedapay',
+    path: '/api/public/webhooks/fedapay',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicWebhooksCinetpayRoute =
+  ApiPublicWebhooksCinetpayRouteImport.update({
+    id: '/api/public/webhooks/cinetpay',
+    path: '/api/public/webhooks/cinetpay',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicV1SmsRoute = ApiPublicV1SmsRouteImport.update({
+  id: '/api/public/v1/sms',
+  path: '/api/public/v1/sms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedDashboardCheckoutSlugRoute =
+  AuthenticatedDashboardCheckoutSlugRouteImport.update({
+    id: '/checkout/$slug',
+    path: '/checkout/$slug',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/a-propos': typeof AProposRoute
+  '/auth': typeof AuthRoute
   '/conditions': typeof ConditionsRoute
   '/confidentialite': typeof ConfidentialiteRoute
   '/contact': typeof ContactRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solutions': typeof SolutionsRoute
   '/tarifs': typeof TarifsRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
+  '/dashboard/api-keys': typeof AuthenticatedDashboardApiKeysRoute
+  '/dashboard/campaigns': typeof AuthenticatedDashboardCampaignsRoute
+  '/dashboard/orders': typeof AuthenticatedDashboardOrdersRoute
+  '/dashboard/checkout/$slug': typeof AuthenticatedDashboardCheckoutSlugRoute
+  '/api/public/v1/sms': typeof ApiPublicV1SmsRoute
+  '/api/public/webhooks/cinetpay': typeof ApiPublicWebhooksCinetpayRoute
+  '/api/public/webhooks/fedapay': typeof ApiPublicWebhooksFedapayRoute
+  '/api/public/webhooks/nmgroupe': typeof ApiPublicWebhooksNmgroupeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/a-propos': typeof AProposRoute
+  '/auth': typeof AuthRoute
   '/conditions': typeof ConditionsRoute
   '/confidentialite': typeof ConfidentialiteRoute
   '/contact': typeof ContactRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solutions': typeof SolutionsRoute
   '/tarifs': typeof TarifsRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
+  '/dashboard/api-keys': typeof AuthenticatedDashboardApiKeysRoute
+  '/dashboard/campaigns': typeof AuthenticatedDashboardCampaignsRoute
+  '/dashboard/orders': typeof AuthenticatedDashboardOrdersRoute
+  '/dashboard/checkout/$slug': typeof AuthenticatedDashboardCheckoutSlugRoute
+  '/api/public/v1/sms': typeof ApiPublicV1SmsRoute
+  '/api/public/webhooks/cinetpay': typeof ApiPublicWebhooksCinetpayRoute
+  '/api/public/webhooks/fedapay': typeof ApiPublicWebhooksFedapayRoute
+  '/api/public/webhooks/nmgroupe': typeof ApiPublicWebhooksNmgroupeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/a-propos': typeof AProposRoute
+  '/auth': typeof AuthRoute
   '/conditions': typeof ConditionsRoute
   '/confidentialite': typeof ConfidentialiteRoute
   '/contact': typeof ContactRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solutions': typeof SolutionsRoute
   '/tarifs': typeof TarifsRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
+  '/_authenticated/dashboard/api-keys': typeof AuthenticatedDashboardApiKeysRoute
+  '/_authenticated/dashboard/campaigns': typeof AuthenticatedDashboardCampaignsRoute
+  '/_authenticated/dashboard/orders': typeof AuthenticatedDashboardOrdersRoute
+  '/_authenticated/dashboard/checkout/$slug': typeof AuthenticatedDashboardCheckoutSlugRoute
+  '/api/public/v1/sms': typeof ApiPublicV1SmsRoute
+  '/api/public/webhooks/cinetpay': typeof ApiPublicWebhooksCinetpayRoute
+  '/api/public/webhooks/fedapay': typeof ApiPublicWebhooksFedapayRoute
+  '/api/public/webhooks/nmgroupe': typeof ApiPublicWebhooksNmgroupeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/a-propos'
+    | '/auth'
     | '/conditions'
     | '/confidentialite'
     | '/contact'
     | '/sitemap.xml'
     | '/solutions'
     | '/tarifs'
+    | '/admin'
+    | '/dashboard'
+    | '/dashboard/api-keys'
+    | '/dashboard/campaigns'
+    | '/dashboard/orders'
+    | '/dashboard/checkout/$slug'
+    | '/api/public/v1/sms'
+    | '/api/public/webhooks/cinetpay'
+    | '/api/public/webhooks/fedapay'
+    | '/api/public/webhooks/nmgroupe'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/a-propos'
+    | '/auth'
     | '/conditions'
     | '/confidentialite'
     | '/contact'
     | '/sitemap.xml'
     | '/solutions'
     | '/tarifs'
+    | '/admin'
+    | '/dashboard'
+    | '/dashboard/api-keys'
+    | '/dashboard/campaigns'
+    | '/dashboard/orders'
+    | '/dashboard/checkout/$slug'
+    | '/api/public/v1/sms'
+    | '/api/public/webhooks/cinetpay'
+    | '/api/public/webhooks/fedapay'
+    | '/api/public/webhooks/nmgroupe'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/a-propos'
+    | '/auth'
     | '/conditions'
     | '/confidentialite'
     | '/contact'
     | '/sitemap.xml'
     | '/solutions'
     | '/tarifs'
+    | '/_authenticated/admin'
+    | '/_authenticated/dashboard'
+    | '/_authenticated/dashboard/api-keys'
+    | '/_authenticated/dashboard/campaigns'
+    | '/_authenticated/dashboard/orders'
+    | '/_authenticated/dashboard/checkout/$slug'
+    | '/api/public/v1/sms'
+    | '/api/public/webhooks/cinetpay'
+    | '/api/public/webhooks/fedapay'
+    | '/api/public/webhooks/nmgroupe'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AProposRoute: typeof AProposRoute
+  AuthRoute: typeof AuthRoute
   ConditionsRoute: typeof ConditionsRoute
   ConfidentialiteRoute: typeof ConfidentialiteRoute
   ContactRoute: typeof ContactRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SolutionsRoute: typeof SolutionsRoute
   TarifsRoute: typeof TarifsRoute
+  ApiPublicV1SmsRoute: typeof ApiPublicV1SmsRoute
+  ApiPublicWebhooksCinetpayRoute: typeof ApiPublicWebhooksCinetpayRoute
+  ApiPublicWebhooksFedapayRoute: typeof ApiPublicWebhooksFedapayRoute
+  ApiPublicWebhooksNmgroupeRoute: typeof ApiPublicWebhooksNmgroupeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -178,11 +330,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConditionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/a-propos': {
       id: '/a-propos'
       path: '/a-propos'
       fullPath: '/a-propos'
       preLoaderRoute: typeof AProposRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -192,18 +358,128 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/dashboard/orders': {
+      id: '/_authenticated/dashboard/orders'
+      path: '/orders'
+      fullPath: '/dashboard/orders'
+      preLoaderRoute: typeof AuthenticatedDashboardOrdersRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/campaigns': {
+      id: '/_authenticated/dashboard/campaigns'
+      path: '/campaigns'
+      fullPath: '/dashboard/campaigns'
+      preLoaderRoute: typeof AuthenticatedDashboardCampaignsRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/api-keys': {
+      id: '/_authenticated/dashboard/api-keys'
+      path: '/api-keys'
+      fullPath: '/dashboard/api-keys'
+      preLoaderRoute: typeof AuthenticatedDashboardApiKeysRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/api/public/webhooks/nmgroupe': {
+      id: '/api/public/webhooks/nmgroupe'
+      path: '/api/public/webhooks/nmgroupe'
+      fullPath: '/api/public/webhooks/nmgroupe'
+      preLoaderRoute: typeof ApiPublicWebhooksNmgroupeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/webhooks/fedapay': {
+      id: '/api/public/webhooks/fedapay'
+      path: '/api/public/webhooks/fedapay'
+      fullPath: '/api/public/webhooks/fedapay'
+      preLoaderRoute: typeof ApiPublicWebhooksFedapayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/webhooks/cinetpay': {
+      id: '/api/public/webhooks/cinetpay'
+      path: '/api/public/webhooks/cinetpay'
+      fullPath: '/api/public/webhooks/cinetpay'
+      preLoaderRoute: typeof ApiPublicWebhooksCinetpayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/v1/sms': {
+      id: '/api/public/v1/sms'
+      path: '/api/public/v1/sms'
+      fullPath: '/api/public/v1/sms'
+      preLoaderRoute: typeof ApiPublicV1SmsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/dashboard/checkout/$slug': {
+      id: '/_authenticated/dashboard/checkout/$slug'
+      path: '/checkout/$slug'
+      fullPath: '/dashboard/checkout/$slug'
+      preLoaderRoute: typeof AuthenticatedDashboardCheckoutSlugRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
   }
 }
 
+interface AuthenticatedDashboardRouteChildren {
+  AuthenticatedDashboardApiKeysRoute: typeof AuthenticatedDashboardApiKeysRoute
+  AuthenticatedDashboardCampaignsRoute: typeof AuthenticatedDashboardCampaignsRoute
+  AuthenticatedDashboardOrdersRoute: typeof AuthenticatedDashboardOrdersRoute
+  AuthenticatedDashboardCheckoutSlugRoute: typeof AuthenticatedDashboardCheckoutSlugRoute
+}
+
+const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
+  {
+    AuthenticatedDashboardApiKeysRoute: AuthenticatedDashboardApiKeysRoute,
+    AuthenticatedDashboardCampaignsRoute: AuthenticatedDashboardCampaignsRoute,
+    AuthenticatedDashboardOrdersRoute: AuthenticatedDashboardOrdersRoute,
+    AuthenticatedDashboardCheckoutSlugRoute:
+      AuthenticatedDashboardCheckoutSlugRoute,
+  }
+
+const AuthenticatedDashboardRouteWithChildren =
+  AuthenticatedDashboardRoute._addFileChildren(
+    AuthenticatedDashboardRouteChildren,
+  )
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRouteWithChildren
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRouteWithChildren,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AProposRoute: AProposRoute,
+  AuthRoute: AuthRoute,
   ConditionsRoute: ConditionsRoute,
   ConfidentialiteRoute: ConfidentialiteRoute,
   ContactRoute: ContactRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SolutionsRoute: SolutionsRoute,
   TarifsRoute: TarifsRoute,
+  ApiPublicV1SmsRoute: ApiPublicV1SmsRoute,
+  ApiPublicWebhooksCinetpayRoute: ApiPublicWebhooksCinetpayRoute,
+  ApiPublicWebhooksFedapayRoute: ApiPublicWebhooksFedapayRoute,
+  ApiPublicWebhooksNmgroupeRoute: ApiPublicWebhooksNmgroupeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
