@@ -1,0 +1,58 @@
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { DashboardLayout } from "@/components/dashboard-chrome";
+import { supabase } from "@/integrations/supabase/client";
+import { fetchRoles } from "@/lib/auth";
+import { listOrdersAdmin, updateOrderStatus } from "@/lib/admin.functions";
+import { toast } from "sonner";
+
+export const Route = createFileRoute("/_authenticated/admin/orders")({
+  beforeLoad: async () => {
+    const { data } = await supabase.auth.getUser();
+    if (!data.user) throw redirect({ to: "/auth" });
+    const roles = await fetchRoles(data.user.id);
+    if (!roles.includes("admin")) throw redirect({ to: "/dashboard" });
+  },
+  component: OrdersAdmin,
+  head: () => ({ meta: [{ title: "Admin · Commandes" }, { name: "robots", content: "noindex" }] }),
+});
+
+function OrdersAdmin() {
+  const qc = useQueryClient();
+  const { data: orders = [] } = useQuery({ queryKey: ["admin-orders"], queryFn: () => listOrdersAdmin() });
+  const upd = useMutation({
+    mutationFn: (v: { id: string; status: any }) => updateOrderStatus({ data: v }),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-orders"] }); toast.success("Statut mis à jour"); },
+    onError: (e: any) => toast.error(e.message),
+  });
+  return (
+    <DashboardLayout title="Toutes les commandes">
+      <div className="bg-background border border-border rounded-sm overflow-x-auto">
+        <table className="w-full text-sm min-w-[700px]">
+          <thead className="bg-muted text-left text-xs uppercase font-mono">
+            <tr><th className="p-3">Date</th><th className="p-3">Client</th><th className="p-3">Package</th><th className="p-3">Montant</th><th className="p-3">Provider</th><th className="p-3">Statut</th></tr>
+          </thead>
+          <tbody>
+            {orders.map((o: any) => (
+              <tr key={o.id} className="border-t border-border">
+                <td className="p-3 text-xs">{new Date(o.created_at).toLocaleString("fr-FR")}</td>
+                <td className="p-3 text-xs">{o.profiles?.email}</td>
+                <td className="p-3">{o.packages?.name ?? "—"}</td>
+                <td className="p-3 font-mono">{o.amount_fcfa.toLocaleString("fr-FR")}</td>
+                <td className="p-3 text-xs uppercase">{o.provider ?? "—"}</td>
+                <td className="p-3">
+                  <select value={o.status} onChange={(e) => upd.mutate({ id: o.id, status: e.target.value })} className="text-xs border border-border rounded-sm px-2 py-1">
+                    <option value="pending">pending</option>
+                    <option value="paid">paid</option>
+                    <option value="failed">failed</option>
+                    <option value="cancelled">cancelled</option>
+                  </select>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </DashboardLayout>
+  );
+}
