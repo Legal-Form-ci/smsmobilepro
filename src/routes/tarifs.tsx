@@ -28,44 +28,10 @@ export const Route = createFileRoute("/tarifs")({
 });
 
 const packages = [
-  {
-    name: "Starter",
-    price: "7 500",
-    volume: "500 SMS",
-    features: ["Support 24/7", "Dashboard mobile", "Sender ID standard", "Rapports basiques"],
-    featured: false,
-  },
-  {
-    name: "Business",
-    price: "13 000",
-    volume: "1 000 SMS",
-    features: [
-      "Sender ID personnalisé",
-      "API Gateway inclus",
-      "Groupes de contacts",
-      "Support prioritaire",
-    ],
-    featured: true,
-  },
-  {
-    name: "Pro",
-    price: "55 000",
-    volume: "5 000 SMS",
-    features: [
-      "Tout Business +",
-      "Rapports avancés",
-      "Webhooks de livraison",
-      "Templates illimités",
-    ],
-    featured: false,
-  },
-  {
-    name: "Enterprise",
-    price: "95 000",
-    volume: "10 000 SMS",
-    features: ["Priorité d'envoi", "Manager de compte dédié", "SLA garanti", "Facturation mensuelle"],
-    featured: false,
-  },
+  { slug: "starter", name: "Starter", price: "7 500", volume: "500 SMS", features: ["Support 24/7", "Dashboard mobile", "Sender ID standard", "Rapports basiques"], featured: false },
+  { slug: "business", name: "Business", price: "13 000", volume: "1 000 SMS", features: ["Sender ID personnalisé", "API Gateway inclus", "Groupes de contacts", "Support prioritaire"], featured: true },
+  { slug: "pro", name: "Pro", price: "55 000", volume: "5 000 SMS", features: ["Tout Business +", "Rapports avancés", "Webhooks de livraison", "Templates illimités"], featured: false },
+  { slug: "enterprise", name: "Enterprise", price: "95 000", volume: "10 000 SMS", features: ["Priorité d'envoi", "Manager de compte dédié", "SLA garanti", "Facturation mensuelle"], featured: false },
 ];
 
 function TarifsPage() {
@@ -128,7 +94,8 @@ function TarifsPage() {
                   ))}
                 </ul>
                 <Link
-                  to="/contact"
+                  to="/auth"
+                  search={{ redirect: `/dashboard/checkout/${p.slug}` }}
                   className={
                     p.featured
                       ? "w-full py-3 bg-background text-primary text-center font-bold hover:opacity-90 transition-opacity"

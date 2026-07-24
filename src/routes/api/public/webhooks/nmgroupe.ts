@@ -44,7 +44,7 @@ export const Route = createFileRoute("/api/public/webhooks/nmgroupe")({
           const status = ev.status;
           if (!providerId || !status) continue;
 
-          const update: Record<string, unknown> = { status };
+          const update: { status: string; delivered_at?: string; error?: string } = { status };
           if (status === "delivered") update.delivered_at = ev.delivered_at ?? new Date().toISOString();
           if (ev.error) update.error = String(ev.error);
 
