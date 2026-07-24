@@ -47,7 +47,7 @@ function PackagesAdmin() {
           <div key={p.id} className="bg-background border border-border rounded-sm p-4">
             <div className="flex justify-between items-start">
               <div>
-                <div className="text-[10px] font-mono uppercase tracking-widest text-foreground/50">{p.slug} {p.featured && "· ★"} {!p.is_active && "· inactif"}</div>
+                <div className="text-[10px] font-mono uppercase tracking-widest text-foreground/50">{p.slug} {p.featured && "· ★"} {!p.active && "· inactif"}</div>
                 <div className="font-display font-bold text-lg">{p.name}</div>
                 <div className="font-mono text-xl mt-1">{p.price_fcfa.toLocaleString("fr-FR")} FCFA</div>
                 <div className="text-xs text-foreground/60">{p.sms_volume.toLocaleString("fr-FR")} SMS</div>
@@ -75,7 +75,7 @@ function PackageForm({ pkg, onDone, onCancel }: { pkg: any; onDone: () => void; 
         id: pkg.id, slug: s.slug, name: s.name,
         price_fcfa: Number(s.price_fcfa), sms_volume: Number(s.sms_volume),
         features: String(s.features).split(/\n/).map((x: string) => x.trim()).filter(Boolean),
-        is_active: !!s.is_active, featured: !!s.featured,
+        is_active: !!s.active, featured: !!s.featured,
       },
     }),
     onSuccess: () => { toast.success("Enregistré"); onDone(); },
@@ -88,7 +88,7 @@ function PackageForm({ pkg, onDone, onCancel }: { pkg: any; onDone: () => void; 
       <input required type="number" value={s.price_fcfa} onChange={(e) => setS({ ...s, price_fcfa: e.target.value })} placeholder="Prix FCFA" className="px-3 py-2 border border-border rounded-sm text-sm" />
       <input required type="number" value={s.sms_volume} onChange={(e) => setS({ ...s, sms_volume: e.target.value })} placeholder="Volume SMS" className="px-3 py-2 border border-border rounded-sm text-sm" />
       <textarea rows={4} value={s.features} onChange={(e) => setS({ ...s, features: e.target.value })} placeholder="Fonctionnalités (une par ligne)" className="sm:col-span-2 px-3 py-2 border border-border rounded-sm text-sm" />
-      <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={!!s.is_active} onChange={(e) => setS({ ...s, is_active: e.target.checked })} />Actif</label>
+      <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={!!s.active} onChange={(e) => setS({ ...s, active: e.target.checked })} />Actif</label>
       <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={!!s.featured} onChange={(e) => setS({ ...s, featured: e.target.checked })} />Mis en avant</label>
       <div className="sm:col-span-2 flex gap-2 justify-end">
         <button type="button" onClick={onCancel} className="px-4 py-2 text-sm border border-border rounded-sm">Annuler</button>
