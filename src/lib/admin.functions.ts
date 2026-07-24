@@ -135,7 +135,13 @@ export const upsertPackage = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin.from("packages").upsert(data, { onConflict: "slug" });
+    const row: any = {
+      slug: data.slug, name: data.name, price_fcfa: data.price_fcfa,
+      sms_volume: data.sms_volume, features: data.features,
+      active: data.is_active ?? true, featured: data.featured ?? false,
+    };
+    if (data.id) row.id = data.id;
+    const { error } = await supabaseAdmin.from("packages").upsert(row, { onConflict: "slug" });
     if (error) throw new Error(error.message);
     return { ok: true };
   });
@@ -167,7 +173,7 @@ export const updateOrderStatus = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: order, error } = await supabaseAdmin.from("orders").update({ status: data.status, paid_at: data.status === "paid" ? new Date().toISOString() : null }).eq("id", data.id).select("user_id, sms_volume, status").maybeSingle();
+    const { data: order, error } = await supabaseAdmin.from("orders").update({ status: data.status }).eq("id", data.id).select("user_id, sms_volume, status").maybeSingle();
     if (error) throw new Error(error.message);
     if (order && data.status === "paid" && order.sms_volume > 0) {
       const { data: prof } = await supabaseAdmin.from("profiles").select("sms_credits").eq("id", order.user_id).maybeSingle();
