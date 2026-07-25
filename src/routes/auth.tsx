@@ -71,6 +71,23 @@ function AuthPage() {
     }
   }
 
+  async function handleForgot() {
+    if (!email) return toast.error("Entrez votre email d'abord.");
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + "/reset-password",
+      });
+      if (error) throw error;
+      toast.success("Email de récupération envoyé. Vérifiez votre boîte.");
+    } catch (err: any) {
+      toast.error(err.message ?? "Erreur");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+
   async function handleGoogle() {
     setLoading(true);
     try {
@@ -143,6 +160,14 @@ function AuthPage() {
               {loading ? "…" : mode === "login" ? "Se connecter" : "Créer mon compte"}
             </button>
           </form>
+
+          {mode === "login" && (
+            <div className="mt-3 text-right">
+              <button type="button" onClick={handleForgot} className="text-xs text-foreground/60 hover:text-primary hover:underline">
+                Mot de passe oublié ?
+              </button>
+            </div>
+          )}
 
           <div className="mt-6 text-sm text-foreground/60 text-center">
             {mode === "login" ? (

@@ -188,6 +188,174 @@ function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* Fonctionnalités clés */}
+      <section className="px-4 py-16 sm:px-8 sm:py-24 bg-muted">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-10 max-w-2xl">
+            <div className="text-xs font-mono uppercase tracking-widest text-primary mb-3">Plateforme</div>
+            <h2 className="font-display text-2xl sm:text-4xl font-extrabold tracking-tight">
+              Tout ce qu'il faut pour envoyer, mesurer et scaler
+            </h2>
+            <p className="text-foreground/70 mt-3 text-sm sm:text-base">
+              Un dashboard clair, une API robuste, des paiements Mobile Money et une équipe locale
+              qui parle votre langue.
+            </p>
+          </div>
+
+          <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              { t: "Éditeur de campagne", d: "Rédigez, ciblez par segment, planifiez l'envoi et suivez les livraisons en temps réel." },
+              { t: "Contacts & segments", d: "Importez CSV, dédupliquez automatiquement, gérez opt-in/opt-out en conformité RGPD light." },
+              { t: "SMS transactionnel", d: "OTP, notifications, alertes critiques avec priorité et fallback multi-opérateur." },
+              { t: "API REST & Webhooks", d: "Intégration en quelques lignes, callbacks de livraison signés, clés révocables par projet." },
+              { t: "Paiement Mobile Money", d: "Orange, MTN, Moov, Wave. Crédits SMS ajoutés automatiquement à la confirmation." },
+              { t: "Statistiques avancées", d: "Taux de livraison, clics sur liens courts, coût par SMS, export CSV & PDF." },
+              { t: "Sender ID personnalisé", d: "Affichez votre marque au lieu d'un numéro. Validation opérateur incluse." },
+              { t: "Support local", d: "Équipe basée à Abidjan, réponse WhatsApp sous 30 min en journée ouvrée." },
+              { t: "Sécurité entreprise", d: "Rôles fins, RLS, chiffrement au repos, audit log — conformité opérateur." },
+            ].map((f) => (
+              <div key={f.t} className="p-5 bg-background border border-border rounded-sm hover:border-primary/40 transition-colors">
+                <h3 className="font-display font-bold text-base sm:text-lg mb-2">{f.t}</h3>
+                <p className="text-sm text-foreground/60 leading-relaxed">{f.d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Cas d'usage */}
+      <section className="px-4 py-16 sm:px-8 sm:py-24">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-10 max-w-2xl">
+            <div className="text-xs font-mono uppercase tracking-widest text-primary mb-3">Cas d'usage</div>
+            <h2 className="font-display text-2xl sm:text-4xl font-extrabold tracking-tight">
+              Fait pour toutes les industries
+            </h2>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              { t: "E-commerce", d: "Relances panier, confirmations, promos flash." },
+              { t: "Fintech & Banques", d: "OTP, alertes transaction, rappels d'échéance." },
+              { t: "Santé", d: "Rappels de rendez-vous, résultats, campagnes de prévention." },
+              { t: "Éducation", d: "Notes, absences, communication parents." },
+              { t: "Événementiel", d: "Confirmations, rappels J-1, coordonnées site." },
+              { t: "Immobilier", d: "Nouvelles annonces, visites, relance leads." },
+              { t: "ONG & Politique", d: "Mobilisation, sondages, alertes terrain." },
+              { t: "Logistique", d: "Suivi de livraison, code retrait, notification chauffeur." },
+            ].map((u) => (
+              <div key={u.t} className="border-l-2 border-primary pl-4 py-1">
+                <div className="font-display font-bold text-sm sm:text-base">{u.t}</div>
+                <div className="text-xs sm:text-sm text-foreground/60 mt-1 leading-relaxed">{u.d}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Comment ça marche */}
+      <section className="px-4 py-16 sm:px-8 sm:py-24 bg-muted">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-10 max-w-2xl">
+            <div className="text-xs font-mono uppercase tracking-widest text-primary mb-3">Workflow</div>
+            <h2 className="font-display text-2xl sm:text-4xl font-extrabold tracking-tight">
+              Envoyez votre première campagne en 4 étapes
+            </h2>
+          </div>
+          <div className="grid gap-4 sm:gap-6 md:grid-cols-4">
+            {[
+              { n: "01", t: "Créez votre compte", d: "Inscription gratuite en 30 secondes, sans carte bancaire." },
+              { n: "02", t: "Achetez un pack", d: "Paiement Mobile Money instantané. Crédits ajoutés automatiquement." },
+              { n: "03", t: "Importez vos contacts", d: "CSV, copier-coller ou via API. Segmentation en un clic." },
+              { n: "04", t: "Lancez & mesurez", d: "Suivi de livraison temps réel, rapport détaillé exportable." },
+            ].map((s) => (
+              <div key={s.n} className="bg-background p-5 border border-border rounded-sm">
+                <div className="font-mono text-primary font-bold text-lg mb-2">{s.n}</div>
+                <div className="font-display font-bold mb-1">{s.t}</div>
+                <div className="text-sm text-foreground/60 leading-relaxed">{s.d}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Témoignages */}
+      <section className="px-4 py-16 sm:px-8 sm:py-24">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-10 max-w-2xl">
+            <div className="text-xs font-mono uppercase tracking-widest text-primary mb-3">Ils nous font confiance</div>
+            <h2 className="font-display text-2xl sm:text-4xl font-extrabold tracking-tight">
+              Des entreprises qui livrent des millions de SMS
+            </h2>
+          </div>
+          <div className="grid gap-4 sm:gap-6 md:grid-cols-3">
+            {[
+              { q: "Depuis qu'on est passés sur SMS Pro Mobile, notre taux d'ouverture est de 97%. Aucun email ne fait ça.", a: "Aïcha K.", r: "CMO, Retail Abidjan" },
+              { q: "L'API a été intégrée à notre core banking en une journée. Les OTP passent en moins de 3 secondes.", a: "Ismaël B.", r: "CTO, Fintech CI" },
+              { q: "Le paiement Mobile Money change tout. Plus besoin de virement, mes packs sont crédités instantanément.", a: "Fatou D.", r: "Fondatrice, e-commerce" },
+            ].map((t) => (
+              <figure key={t.a} className="p-6 bg-background border border-border rounded-sm">
+                <blockquote className="text-sm sm:text-base text-foreground/80 italic leading-relaxed">« {t.q} »</blockquote>
+                <figcaption className="mt-4 pt-4 border-t border-border">
+                  <div className="font-bold text-sm">{t.a}</div>
+                  <div className="text-xs text-foreground/50">{t.r}</div>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="px-4 py-16 sm:px-8 sm:py-24 bg-muted">
+        <div className="mx-auto max-w-4xl">
+          <div className="mb-10">
+            <div className="text-xs font-mono uppercase tracking-widest text-primary mb-3">FAQ</div>
+            <h2 className="font-display text-2xl sm:text-4xl font-extrabold tracking-tight">
+              Les questions fréquentes
+            </h2>
+          </div>
+          <div className="space-y-3">
+            {[
+              { q: "Combien coûte un SMS ?", a: "À partir de 9,5 FCFA/SMS selon le pack. Aucun frais d'abonnement, pas de minimum." },
+              { q: "Quels opérateurs sont couverts ?", a: "Orange, MTN et Moov en Côte d'Ivoire, avec routage optimisé vers l'Afrique de l'Ouest." },
+              { q: "Puis-je utiliser mon nom de marque comme expéditeur ?", a: "Oui, Sender ID alphanumérique jusqu'à 11 caractères après validation opérateur (24h)." },
+              { q: "Est-ce conforme RGPD ?", a: "Oui : opt-in explicite, opt-out automatique par STOP, journalisation et droit à l'oubli." },
+              { q: "Puis-je tester gratuitement ?", a: "Créez un compte gratuit et recevez des crédits de test pour valider vos intégrations." },
+              { q: "Comment se passe le paiement ?", a: "Mobile Money (Orange, MTN, Moov, Wave) instantané via CinetPay/FedaPay. Facture PDF fournie." },
+            ].map((f) => (
+              <details key={f.q} className="group bg-background border border-border rounded-sm p-4">
+                <summary className="cursor-pointer font-semibold text-sm sm:text-base flex justify-between items-center gap-4">
+                  <span>{f.q}</span>
+                  <span className="text-primary text-xl group-open:rotate-45 transition-transform">+</span>
+                </summary>
+                <p className="mt-3 text-sm text-foreground/70 leading-relaxed">{f.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Final */}
+      <section className="px-4 py-16 sm:px-8 sm:py-24 bg-primary text-primary-foreground">
+        <div className="mx-auto max-w-4xl text-center">
+          <h2 className="font-display text-3xl sm:text-5xl font-extrabold tracking-tight mb-4 text-balance">
+            Prêt à envoyer vos premiers SMS ?
+          </h2>
+          <p className="text-primary-foreground/90 text-base sm:text-lg mb-8 max-w-2xl mx-auto">
+            Créez votre compte gratuitement et lancez votre première campagne en quelques minutes.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto">
+            <Link to="/auth" search={{ mode: "signup" }} className="flex-1 bg-background text-primary py-4 px-6 rounded-sm font-bold hover:opacity-90 transition-opacity">
+              Créer mon compte
+            </Link>
+            <Link to="/contact" className="flex-1 border border-primary-foreground/30 py-4 px-6 rounded-sm font-semibold hover:bg-primary-foreground/10 transition-colors">
+              Parler à un expert
+            </Link>
+          </div>
+        </div>
+      </section>
     </SiteLayout>
   );
 }
+
