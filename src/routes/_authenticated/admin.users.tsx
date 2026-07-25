@@ -2,6 +2,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { DashboardLayout } from "@/components/dashboard-chrome";
+import { AdminToolbar } from "@/components/admin-toolbar";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchRoles } from "@/lib/auth";
 import { listUsers, updateUser, setUserRole, deleteUser, createUser } from "@/lib/admin.functions";
