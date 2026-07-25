@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { track } from "@/lib/analytics";
+import { supabase } from "@/integrations/supabase/client";
 
 const NAV = [
   { to: "/solutions", label: "Solutions" },
