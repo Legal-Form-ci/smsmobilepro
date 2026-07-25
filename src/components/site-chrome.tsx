@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { track } from "@/lib/analytics";
+import { supabase } from "@/integrations/supabase/client";
 
 const NAV = [
   { to: "/solutions", label: "Solutions" },
@@ -12,6 +13,13 @@ const NAV = [
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const [signedIn, setSignedIn] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setSignedIn(!!data.session));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSignedIn(!!s));
+    return () => sub.subscription.unsubscribe();
+  }, []);
 
   return (
     <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
@@ -25,7 +33,7 @@ export function SiteHeader() {
           </span>
         </Link>
 
-        <div className="flex items-center gap-3 sm:gap-6 min-w-0">
+        <div className="flex items-center gap-2 sm:gap-5 min-w-0">
           <div className="hidden md:flex items-center gap-6 text-sm font-semibold">
             {NAV.map((n) => (
               <Link key={n.to} to={n.to} className="hover:text-primary transition-colors">
@@ -34,13 +42,33 @@ export function SiteHeader() {
             ))}
           </div>
 
-          <Link
-            to="/contact"
-            onClick={() => track("cta_signup_click", { location: "header" })}
-            className="bg-primary text-primary-foreground px-3 sm:px-4 py-2 rounded-sm text-xs sm:text-sm font-semibold hover:bg-primary-dark transition-colors active:scale-95 shrink-0"
-          >
-            S'inscrire
-          </Link>
+          {signedIn ? (
+            <Link
+              to="/dashboard"
+              className="bg-primary text-primary-foreground px-3 sm:px-4 py-2 rounded-sm text-xs sm:text-sm font-semibold hover:bg-primary-dark transition-colors active:scale-95 shrink-0"
+            >
+              Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link
+                to="/auth"
+                search={{ mode: "login" }}
+                onClick={() => track("cta_login_click", { location: "header" })}
+                className="hidden sm:inline text-xs sm:text-sm font-semibold hover:text-primary shrink-0"
+              >
+                Se connecter
+              </Link>
+              <Link
+                to="/auth"
+                search={{ mode: "signup" }}
+                onClick={() => track("cta_signup_click", { location: "header" })}
+                className="bg-primary text-primary-foreground px-3 sm:px-4 py-2 rounded-sm text-xs sm:text-sm font-semibold hover:bg-primary-dark transition-colors active:scale-95 shrink-0"
+              >
+                S'inscrire
+              </Link>
+            </>
+          )}
 
           <button
             type="button"
@@ -62,11 +90,21 @@ export function SiteHeader() {
                 key={n.to}
                 to={n.to}
                 onClick={() => setOpen(false)}
-                className="py-3 px-2 text-sm font-semibold hover:text-primary border-b border-border/60 last:border-b-0"
+                className="py-3 px-2 text-sm font-semibold hover:text-primary border-b border-border/60"
               >
                 {n.label}
               </Link>
             ))}
+            {!signedIn && (
+              <Link
+                to="/auth"
+                search={{ mode: "login" }}
+                onClick={() => setOpen(false)}
+                className="py-3 px-2 text-sm font-semibold hover:text-primary"
+              >
+                Se connecter
+              </Link>
+            )}
           </div>
         </div>
       )}
