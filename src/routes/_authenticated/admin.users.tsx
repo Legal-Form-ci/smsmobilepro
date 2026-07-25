@@ -49,43 +49,61 @@ function UsersPage() {
       {showNew && <NewUserForm onDone={() => { setShowNew(false); invalidate(); }} onCancel={() => setShowNew(false)} />}
       {editing && <EditUserForm user={editing} onDone={() => { setEditing(null); invalidate(); }} onCancel={() => setEditing(null)} />}
 
-      <div className="bg-background border border-border rounded-sm overflow-x-auto">
-        {isLoading && <div className="p-6 text-sm text-center text-foreground/50">Chargement…</div>}
-        <table className="w-full text-sm min-w-[700px]">
-          <thead className="bg-muted text-left text-xs uppercase font-mono">
-            <tr>
-              <th className="p-3">Email</th><th className="p-3">Nom</th><th className="p-3">Crédits</th>
-              <th className="p-3">Rôles</th><th className="p-3">Créé</th><th className="p-3"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((u: any) => {
-              const roles = (u.user_roles ?? []).map((r: any) => r.role);
-              const isAdmin = roles.includes("admin");
-              return (
-                <tr key={u.id} className="border-t border-border">
-                  <td className="p-3 font-mono text-xs">{u.email}</td>
-                  <td className="p-3">{u.full_name ?? "—"}</td>
-                  <td className="p-3 font-mono">{u.sms_credits ?? 0}</td>
-                  <td className="p-3">
-                    <button
-                      onClick={() => roleMut.mutate({ user_id: u.id, role: "admin", grant: !isAdmin })}
-                      className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded ${isAdmin ? "bg-primary text-primary-foreground" : "bg-muted"}`}
-                    >
-                      admin {isAdmin ? "✓" : "○"}
-                    </button>
-                  </td>
-                  <td className="p-3 text-xs text-foreground/60">{new Date(u.created_at).toLocaleDateString("fr-FR")}</td>
-                  <td className="p-3 text-right whitespace-nowrap">
-                    <button onClick={() => setEditing(u)} className="text-xs underline mr-3">Éditer</button>
-                    <button onClick={() => { if (confirm(`Supprimer ${u.email} ?`)) del.mutate(u.id); }} className="text-xs text-red-600 hover:underline">Supprimer</button>
-                  </td>
+      {isLoading && <div className="p-6 text-sm text-center text-foreground/50">Chargement…</div>}
+
+      <AdminToolbar
+        title="Utilisateurs"
+        rows={users}
+        mapRow={(u: any) => ({
+          email: u.email,
+          nom: u.full_name ?? "",
+          entreprise: u.company ?? "",
+          telephone: u.phone ?? "",
+          credits_sms: u.sms_credits ?? 0,
+          roles: (u.user_roles ?? []).map((r: any) => r.role).join("|"),
+          cree_le: u.created_at,
+        })}
+        searchKeys={["email", "full_name", "company", "phone"]}
+      >
+        {({ rows }) => (
+          <div className="bg-background border border-border rounded-sm overflow-x-auto">
+            <table className="w-full text-sm min-w-[700px]">
+              <thead className="bg-muted text-left text-xs uppercase font-mono">
+                <tr>
+                  <th className="p-3">Email</th><th className="p-3">Nom</th><th className="p-3">Crédits</th>
+                  <th className="p-3">Rôles</th><th className="p-3">Créé</th><th className="p-3"></th>
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+              </thead>
+              <tbody>
+                {rows.map((u: any) => {
+                  const roles = (u.user_roles ?? []).map((r: any) => r.role);
+                  const isAdmin = roles.includes("admin");
+                  return (
+                    <tr key={u.id} className="border-t border-border">
+                      <td className="p-3 font-mono text-xs">{u.email}</td>
+                      <td className="p-3">{u.full_name ?? "—"}</td>
+                      <td className="p-3 font-mono">{u.sms_credits ?? 0}</td>
+                      <td className="p-3">
+                        <button
+                          onClick={() => roleMut.mutate({ user_id: u.id, role: "admin", grant: !isAdmin })}
+                          className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded ${isAdmin ? "bg-primary text-primary-foreground" : "bg-muted"}`}
+                        >
+                          admin {isAdmin ? "✓" : "○"}
+                        </button>
+                      </td>
+                      <td className="p-3 text-xs text-foreground/60">{new Date(u.created_at).toLocaleDateString("fr-FR")}</td>
+                      <td className="p-3 text-right whitespace-nowrap">
+                        <button onClick={() => setEditing(u)} className="text-xs underline mr-3">Éditer</button>
+                        <button onClick={() => { if (confirm(`Supprimer ${u.email} ?`)) del.mutate(u.id); }} className="text-xs text-red-600 hover:underline">Supprimer</button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </AdminToolbar>
     </DashboardLayout>
   );
 }
