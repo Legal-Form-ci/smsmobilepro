@@ -31,6 +31,8 @@ function AuthPage() {
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [company, setCompany] = useState("");
+  const [gdpr, setGdpr] = useState(false);
+  const [marketing, setMarketing] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -45,6 +47,10 @@ function AuthPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (mode === "signup" && !gdpr) {
+      toast.error("Vous devez accepter la politique de confidentialité pour créer un compte.");
+      return;
+    }
     setLoading(true);
     try {
       if (mode === "signup") {
@@ -53,10 +59,20 @@ function AuthPage() {
           password,
           options: {
             emailRedirectTo: window.location.origin + targetPath,
-            data: { full_name: fullName, phone, company },
+            data: {
+              full_name: fullName,
+              phone,
+              company,
+              gdpr_consent_at: new Date().toISOString(),
+              marketing_consent: marketing,
+            },
           },
         });
         if (error) throw error;
+        try {
+          const { recordConsent } = await import("@/lib/account.functions");
+          await recordConsent({ data: { marketing } });
+        } catch { /* profile trigger may not be ready yet; ignore */ }
         toast.success("Compte créé. Vous êtes connecté.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -155,6 +171,25 @@ function AuthPage() {
             )}
             <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="w-full px-4 py-3 border border-border rounded-sm text-sm bg-background" />
             <input required type="password" minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Mot de passe (min. 6)" className="w-full px-4 py-3 border border-border rounded-sm text-sm bg-background" />
+
+            {mode === "signup" && (
+              <div className="space-y-2 pt-1">
+                <label className="flex items-start gap-2 text-xs text-foreground/70">
+                  <input type="checkbox" checked={gdpr} onChange={(e) => setGdpr(e.target.checked)} className="mt-0.5 accent-primary" />
+                  <span>
+                    J'accepte la{" "}
+                    <Link to="/confidentialite" className="text-primary underline">politique de confidentialité</Link>
+                    {" "}et les{" "}
+                    <Link to="/conditions" className="text-primary underline">conditions d'utilisation</Link>.
+                    <span className="text-primary"> *</span>
+                  </span>
+                </label>
+                <label className="flex items-start gap-2 text-xs text-foreground/60">
+                  <input type="checkbox" checked={marketing} onChange={(e) => setMarketing(e.target.checked)} className="mt-0.5 accent-primary" />
+                  <span>J'accepte de recevoir des offres et actualités par email (optionnel).</span>
+                </label>
+              </div>
+            )}
 
             <button type="submit" disabled={loading} className="w-full py-3 bg-primary text-primary-foreground rounded-sm font-semibold text-sm hover:bg-primary-dark transition-colors disabled:opacity-50">
               {loading ? "…" : mode === "login" ? "Se connecter" : "Créer mon compte"}
