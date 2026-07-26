@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/site-chrome";
+import { HeroCarousel } from "@/components/hero-carousel";
 
 export const Route = createFileRoute("/")({
   component: LandingPage,
@@ -30,37 +31,43 @@ function LandingPage() {
       {/* Hero */}
       <section className="px-4 pt-10 pb-14 sm:px-8 sm:pt-16 sm:pb-24 bg-muted">
         <div className="mx-auto max-w-6xl">
-          <div className="animate-fade-up max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-2 py-1 bg-background border border-border rounded-full mb-6">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success/70 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-success" />
-              </span>
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-foreground/60 font-mono">
-                Services Opérationnels
-              </span>
+          <div className="grid lg:grid-cols-[1.1fr_1fr] gap-10 lg:gap-14 items-center">
+            <div className="animate-fade-up">
+              <div className="inline-flex items-center gap-2 px-2 py-1 bg-background border border-border rounded-full mb-6">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success/70 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-success" />
+                </span>
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-foreground/60 font-mono">
+                  Services Opérationnels
+                </span>
+              </div>
+              <h1 className="font-display font-extrabold text-[2rem] sm:text-6xl leading-[1.05] tracking-tight text-balance mb-6">
+                Propulsez votre business par <span className="text-primary">SMS</span>
+              </h1>
+              <p className="text-foreground/70 text-base sm:text-xl mb-8 max-w-[42ch] text-pretty">
+                La plateforme leader pour vos campagnes marketing et alertes critiques en Côte
+                d'Ivoire et Afrique de l'Ouest.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 sm:max-w-md">
+                <Link
+                  to="/auth"
+                  search={{ mode: "signup" }}
+                  className="flex-1 bg-primary text-primary-foreground text-center py-4 px-6 rounded-sm font-semibold shadow-[var(--shadow-hero)] transition-transform active:scale-[0.98] hover:bg-primary-dark"
+                >
+                  Créer un compte gratuit
+                </Link>
+                <Link
+                  to="/tarifs"
+                  className="flex-1 bg-background border border-border text-center py-4 px-6 rounded-sm font-semibold hover:border-primary transition-colors"
+                >
+                  Voir les tarifs
+                </Link>
+              </div>
             </div>
-            <h1 className="font-display font-extrabold text-[2rem] sm:text-6xl leading-[1.05] tracking-tight text-balance mb-6">
-              Propulsez votre business par <span className="text-primary">SMS</span>
-            </h1>
-            <p className="text-foreground/70 text-base sm:text-xl mb-8 max-w-[42ch] text-pretty">
-              La plateforme leader pour vos campagnes marketing et alertes critiques en Côte
-              d'Ivoire et Afrique de l'Ouest.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:max-w-md">
-              <Link
-                to="/auth"
-                search={{ mode: "signup" }}
-                className="flex-1 bg-primary text-primary-foreground text-center py-4 px-6 rounded-sm font-semibold shadow-[var(--shadow-hero)] transition-transform active:scale-[0.98] hover:bg-primary-dark"
-              >
-                Créer un compte gratuit
-              </Link>
-              <Link
-                to="/tarifs"
-                className="flex-1 bg-background border border-border text-center py-4 px-6 rounded-sm font-semibold hover:border-primary transition-colors"
-              >
-                Voir les tarifs
-              </Link>
+
+            <div className="animate-fade-up [animation-delay:150ms]">
+              <HeroCarousel />
             </div>
           </div>
 
