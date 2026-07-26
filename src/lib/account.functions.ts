@@ -44,8 +44,7 @@ export const deleteMyAccount = createServerFn({ method: "POST" })
     await supabaseAdmin.from("user_roles").delete().eq("user_id", userId);
     await supabaseAdmin.from("profiles").delete().eq("id", userId);
 
-    // Anonymise linked contact submissions rather than deleting (kept for legal record)
-    await supabaseAdmin.from("contact_submissions").update({ email: "deleted@user.local", full_name: "Utilisateur supprimé", phone: null, company: null }).eq("user_id", userId);
+    // Contact submissions have no user_id link — leave the historical rows in place.
 
     // Finally delete auth user (auth admin)
     const { error } = await supabaseAdmin.auth.admin.deleteUser(userId);
