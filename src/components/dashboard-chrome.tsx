@@ -19,6 +19,7 @@ const NAV: NavItem[] = [
   { to: "/admin/orders", label: "Toutes commandes", admin: true },
   { to: "/admin/campaigns", label: "Toutes campagnes", admin: true },
   { to: "/admin/contacts", label: "Messages contact", admin: true },
+  { to: "/admin/news", label: "Actualités (CMS)", admin: true },
 ];
 
 export function DashboardLayout({ children, title }: { children: React.ReactNode; title: string }) {
