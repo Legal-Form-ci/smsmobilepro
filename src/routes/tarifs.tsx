@@ -120,7 +120,7 @@ function TarifsPage() {
               mesure et les campagnes multi-pays.
             </p>
             <Link
-              to="/contact"
+              to="/auth" search={{ mode: "signup" as const }}
               className="inline-block bg-primary text-primary-foreground py-2.5 px-5 rounded-sm font-semibold text-sm hover:bg-primary-dark transition-colors"
             >
               Demander un devis
