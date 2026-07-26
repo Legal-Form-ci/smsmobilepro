@@ -77,19 +77,71 @@ export type Database = {
         }
         Relationships: []
       }
+      campaign_executions: {
+        Row: {
+          campaign_id: string
+          created_at: string
+          delivered_count: number
+          error: string | null
+          failed_count: number
+          id: string
+          run_at: string
+          sent_count: number
+          status: string
+          user_id: string
+        }
+        Insert: {
+          campaign_id: string
+          created_at?: string
+          delivered_count?: number
+          error?: string | null
+          failed_count?: number
+          id?: string
+          run_at?: string
+          sent_count?: number
+          status?: string
+          user_id: string
+        }
+        Update: {
+          campaign_id?: string
+          created_at?: string
+          delivered_count?: number
+          error?: string | null
+          failed_count?: number
+          id?: string
+          run_at?: string
+          sent_count?: number
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_executions_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       campaigns: {
         Row: {
           created_at: string
           delivered_count: number
           failed_count: number
           id: string
+          last_run_at: string | null
           message: string
           name: string
+          next_run_at: string | null
           recipients: Json
+          recurrence: string | null
+          recurrence_end: string | null
           scheduled_at: string | null
           sender_id: string
           sent_count: number
           status: string
+          timezone: string
           updated_at: string
           user_id: string
         }
@@ -98,13 +150,18 @@ export type Database = {
           delivered_count?: number
           failed_count?: number
           id?: string
+          last_run_at?: string | null
           message: string
           name: string
+          next_run_at?: string | null
           recipients?: Json
+          recurrence?: string | null
+          recurrence_end?: string | null
           scheduled_at?: string | null
           sender_id: string
           sent_count?: number
           status?: string
+          timezone?: string
           updated_at?: string
           user_id: string
         }
@@ -113,13 +170,18 @@ export type Database = {
           delivered_count?: number
           failed_count?: number
           id?: string
+          last_run_at?: string | null
           message?: string
           name?: string
+          next_run_at?: string | null
           recipients?: Json
+          recurrence?: string | null
+          recurrence_end?: string | null
           scheduled_at?: string | null
           sender_id?: string
           sent_count?: number
           status?: string
+          timezone?: string
           updated_at?: string
           user_id?: string
         }
@@ -265,7 +327,9 @@ export type Database = {
           created_at: string
           email: string
           full_name: string | null
+          gdpr_consent_at: string | null
           id: string
+          marketing_consent: boolean
           phone: string | null
           sms_credits: number
           updated_at: string
@@ -275,7 +339,9 @@ export type Database = {
           created_at?: string
           email: string
           full_name?: string | null
+          gdpr_consent_at?: string | null
           id: string
+          marketing_consent?: boolean
           phone?: string | null
           sms_credits?: number
           updated_at?: string
@@ -285,7 +351,9 @@ export type Database = {
           created_at?: string
           email?: string
           full_name?: string | null
+          gdpr_consent_at?: string | null
           id?: string
+          marketing_consent?: boolean
           phone?: string | null
           sms_credits?: number
           updated_at?: string
