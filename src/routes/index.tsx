@@ -337,6 +337,49 @@ function LandingPage() {
         </div>
       </section>
 
+      {/* Contact / Devis */}
+      <section className="px-4 py-16 sm:px-8 sm:py-20 bg-background border-t border-border">
+        <div className="mx-auto max-w-5xl grid gap-10 md:grid-cols-2 items-start">
+          <div>
+            <div className="text-xs font-mono uppercase tracking-widest text-primary mb-3">Contact · Devis</div>
+            <h2 className="font-display text-3xl sm:text-4xl font-extrabold tracking-tight mb-4 text-balance">
+              Un volume important ? Un besoin sur mesure ?
+            </h2>
+            <p className="text-foreground/70 mb-6">
+              Créez votre compte pour accéder immédiatement à l'espace client, obtenir un devis personnalisé
+              et discuter avec un expert SMS Pro Mobile. Aucun engagement, activation en 2 minutes.
+            </p>
+            <ul className="space-y-2 text-sm">
+              <li className="flex items-start gap-2"><span className="text-primary font-bold">✓</span> Tarifs dégressifs au-delà de 50 000 SMS/mois</li>
+              <li className="flex items-start gap-2"><span className="text-primary font-bold">✓</span> Intégration API et onboarding gratuits</li>
+              <li className="flex items-start gap-2"><span className="text-primary font-bold">✓</span> Support dédié 6j/7 en français</li>
+              <li className="flex items-start gap-2"><span className="text-primary font-bold">✓</span> Paiement Mobile Money (Orange, MTN, Moov, Wave)</li>
+            </ul>
+          </div>
+          <div className="bg-muted border border-border rounded-sm p-6">
+            <div className="text-[10px] font-mono uppercase tracking-widest text-foreground/50 mb-2">Démarrer</div>
+            <div className="font-display text-2xl font-extrabold mb-4">Créez votre compte</div>
+            <p className="text-sm text-foreground/70 mb-5">
+              L'inscription vous donne accès au dashboard, aux crédits d'essai et au devis en ligne.
+            </p>
+            <div className="flex flex-col gap-2">
+              <Link to="/auth" search={{ mode: "signup" }} className="w-full bg-primary text-primary-foreground text-center py-3 rounded-sm font-bold hover:bg-primary-dark transition-colors">
+                S'inscrire — c'est gratuit
+              </Link>
+              <Link to="/auth" search={{ mode: "login" }} className="w-full bg-background border border-border text-center py-3 rounded-sm font-semibold hover:border-primary transition-colors">
+                J'ai déjà un compte
+              </Link>
+            </div>
+            <p className="text-[11px] text-foreground/50 mt-4 text-center">
+              Besoin d'un contact direct ?{" "}
+              <a href="https://wa.me/2250700000000" target="_blank" rel="noopener noreferrer" className="text-primary underline">WhatsApp</a>
+              {" · "}
+              <Link to="/contact" className="text-primary underline">Formulaire</Link>
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Final */}
       <section className="px-4 py-16 sm:px-8 sm:py-24 bg-primary text-primary-foreground">
         <div className="mx-auto max-w-4xl text-center">
@@ -350,8 +393,8 @@ function LandingPage() {
             <Link to="/auth" search={{ mode: "signup" }} className="flex-1 bg-background text-primary py-4 px-6 rounded-sm font-bold hover:opacity-90 transition-opacity">
               Créer mon compte
             </Link>
-            <Link to="/contact" className="flex-1 border border-primary-foreground/30 py-4 px-6 rounded-sm font-semibold hover:bg-primary-foreground/10 transition-colors">
-              Parler à un expert
+            <Link to="/tarifs" className="flex-1 border border-primary-foreground/30 py-4 px-6 rounded-sm font-semibold hover:bg-primary-foreground/10 transition-colors">
+              Voir les tarifs
             </Link>
           </div>
         </div>
