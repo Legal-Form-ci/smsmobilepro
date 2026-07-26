@@ -19,14 +19,15 @@ export const Route = createFileRoute("/api/public/webhooks/nmgroupe")({
         const bodyText = await request.text();
         const secret = process.env.NMGROUPE_WEBHOOK_SECRET;
 
-        if (secret) {
-          const sig = request.headers.get("x-nmgroupe-signature") ?? "";
-          const expected = createHmac("sha256", secret).update(bodyText).digest("hex");
-          const a = Buffer.from(sig);
-          const b = Buffer.from(expected);
-          if (a.length !== b.length || !timingSafeEqual(a, b)) {
-            return new Response("Invalid signature", { status: 401 });
-          }
+        if (!secret) {
+          return new Response("Webhook secret not configured", { status: 503 });
+        }
+        const sig = request.headers.get("x-nmgroupe-signature") ?? "";
+        const expected = createHmac("sha256", secret).update(bodyText).digest("hex");
+        const a = Buffer.from(sig);
+        const b = Buffer.from(expected);
+        if (a.length !== b.length || !timingSafeEqual(a, b)) {
+          return new Response("Invalid signature", { status: 401 });
         }
 
         let payload: any;

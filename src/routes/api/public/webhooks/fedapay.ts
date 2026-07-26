@@ -7,14 +7,15 @@ export const Route = createFileRoute("/api/public/webhooks/fedapay")({
       POST: async ({ request }) => {
         const bodyText = await request.text();
         const secret = process.env.FEDAPAY_WEBHOOK_SECRET;
-        if (secret) {
-          const sig = request.headers.get("x-fedapay-signature") ?? "";
-          const expected = createHmac("sha256", secret).update(bodyText).digest("hex");
-          const a = Buffer.from(sig);
-          const b = Buffer.from(expected);
-          if (a.length !== b.length || !timingSafeEqual(a, b)) {
-            return new Response("Invalid signature", { status: 401 });
-          }
+        if (!secret) {
+          return new Response("Webhook secret not configured", { status: 503 });
+        }
+        const sig = request.headers.get("x-fedapay-signature") ?? "";
+        const expected = createHmac("sha256", secret).update(bodyText).digest("hex");
+        const a = Buffer.from(sig);
+        const b = Buffer.from(expected);
+        if (a.length !== b.length || !timingSafeEqual(a, b)) {
+          return new Response("Invalid signature", { status: 401 });
         }
         let payload: any;
         try { payload = JSON.parse(bodyText); } catch { return new Response("Invalid JSON", { status: 400 }); }
