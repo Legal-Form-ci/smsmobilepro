@@ -120,7 +120,7 @@ function AProposPage() {
               toutes vos questions techniques et commerciales.
             </p>
             <Link
-              to="/contact"
+              to="/auth" search={{ mode: "signup" as const }}
               className="inline-block bg-primary text-primary-foreground py-3 px-6 rounded-sm font-semibold hover:bg-primary-dark transition-colors"
             >
               Nous contacter

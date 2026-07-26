@@ -111,7 +111,7 @@ function SolutionsPage() {
               Voir les tarifs
             </Link>
             <Link
-              to="/contact"
+              to="/auth" search={{ mode: "signup" as const }}
               className="bg-background border border-border text-center py-3.5 px-6 rounded-sm font-semibold hover:border-primary transition-colors"
             >
               Demander un accès API

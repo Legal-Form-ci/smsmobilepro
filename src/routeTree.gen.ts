@@ -22,6 +22,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedDashboardSettingsRouteImport } from './routes/_authenticated/dashboard.settings'
 import { Route as AuthenticatedDashboardOrdersRouteImport } from './routes/_authenticated/dashboard.orders'
 import { Route as AuthenticatedDashboardCampaignsRouteImport } from './routes/_authenticated/dashboard.campaigns'
 import { Route as AuthenticatedDashboardApiKeysRouteImport } from './routes/_authenticated/dashboard.api-keys'
@@ -34,6 +35,7 @@ import { Route as ApiPublicWebhooksNmgroupeRouteImport } from './routes/api/publ
 import { Route as ApiPublicWebhooksFedapayRouteImport } from './routes/api/public/webhooks/fedapay'
 import { Route as ApiPublicWebhooksCinetpayRouteImport } from './routes/api/public/webhooks/cinetpay'
 import { Route as ApiPublicV1SmsRouteImport } from './routes/api/public/v1/sms'
+import { Route as ApiPublicHooksCampaignsCronRouteImport } from './routes/api/public/hooks/campaigns-cron'
 import { Route as AuthenticatedDashboardCheckoutSlugRouteImport } from './routes/_authenticated/dashboard.checkout.$slug'
 
 const TarifsRoute = TarifsRouteImport.update({
@@ -100,6 +102,12 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedDashboardSettingsRoute =
+  AuthenticatedDashboardSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const AuthenticatedDashboardOrdersRoute =
   AuthenticatedDashboardOrdersRouteImport.update({
     id: '/orders',
@@ -170,6 +178,12 @@ const ApiPublicV1SmsRoute = ApiPublicV1SmsRouteImport.update({
   path: '/api/public/v1/sms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksCampaignsCronRoute =
+  ApiPublicHooksCampaignsCronRouteImport.update({
+    id: '/api/public/hooks/campaigns-cron',
+    path: '/api/public/hooks/campaigns-cron',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedDashboardCheckoutSlugRoute =
   AuthenticatedDashboardCheckoutSlugRouteImport.update({
     id: '/checkout/$slug',
@@ -198,7 +212,9 @@ export interface FileRoutesByFullPath {
   '/dashboard/api-keys': typeof AuthenticatedDashboardApiKeysRoute
   '/dashboard/campaigns': typeof AuthenticatedDashboardCampaignsRoute
   '/dashboard/orders': typeof AuthenticatedDashboardOrdersRoute
+  '/dashboard/settings': typeof AuthenticatedDashboardSettingsRoute
   '/dashboard/checkout/$slug': typeof AuthenticatedDashboardCheckoutSlugRoute
+  '/api/public/hooks/campaigns-cron': typeof ApiPublicHooksCampaignsCronRoute
   '/api/public/v1/sms': typeof ApiPublicV1SmsRoute
   '/api/public/webhooks/cinetpay': typeof ApiPublicWebhooksCinetpayRoute
   '/api/public/webhooks/fedapay': typeof ApiPublicWebhooksFedapayRoute
@@ -225,7 +241,9 @@ export interface FileRoutesByTo {
   '/dashboard/api-keys': typeof AuthenticatedDashboardApiKeysRoute
   '/dashboard/campaigns': typeof AuthenticatedDashboardCampaignsRoute
   '/dashboard/orders': typeof AuthenticatedDashboardOrdersRoute
+  '/dashboard/settings': typeof AuthenticatedDashboardSettingsRoute
   '/dashboard/checkout/$slug': typeof AuthenticatedDashboardCheckoutSlugRoute
+  '/api/public/hooks/campaigns-cron': typeof ApiPublicHooksCampaignsCronRoute
   '/api/public/v1/sms': typeof ApiPublicV1SmsRoute
   '/api/public/webhooks/cinetpay': typeof ApiPublicWebhooksCinetpayRoute
   '/api/public/webhooks/fedapay': typeof ApiPublicWebhooksFedapayRoute
@@ -254,7 +272,9 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/api-keys': typeof AuthenticatedDashboardApiKeysRoute
   '/_authenticated/dashboard/campaigns': typeof AuthenticatedDashboardCampaignsRoute
   '/_authenticated/dashboard/orders': typeof AuthenticatedDashboardOrdersRoute
+  '/_authenticated/dashboard/settings': typeof AuthenticatedDashboardSettingsRoute
   '/_authenticated/dashboard/checkout/$slug': typeof AuthenticatedDashboardCheckoutSlugRoute
+  '/api/public/hooks/campaigns-cron': typeof ApiPublicHooksCampaignsCronRoute
   '/api/public/v1/sms': typeof ApiPublicV1SmsRoute
   '/api/public/webhooks/cinetpay': typeof ApiPublicWebhooksCinetpayRoute
   '/api/public/webhooks/fedapay': typeof ApiPublicWebhooksFedapayRoute
@@ -283,7 +303,9 @@ export interface FileRouteTypes {
     | '/dashboard/api-keys'
     | '/dashboard/campaigns'
     | '/dashboard/orders'
+    | '/dashboard/settings'
     | '/dashboard/checkout/$slug'
+    | '/api/public/hooks/campaigns-cron'
     | '/api/public/v1/sms'
     | '/api/public/webhooks/cinetpay'
     | '/api/public/webhooks/fedapay'
@@ -310,7 +332,9 @@ export interface FileRouteTypes {
     | '/dashboard/api-keys'
     | '/dashboard/campaigns'
     | '/dashboard/orders'
+    | '/dashboard/settings'
     | '/dashboard/checkout/$slug'
+    | '/api/public/hooks/campaigns-cron'
     | '/api/public/v1/sms'
     | '/api/public/webhooks/cinetpay'
     | '/api/public/webhooks/fedapay'
@@ -338,7 +362,9 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/api-keys'
     | '/_authenticated/dashboard/campaigns'
     | '/_authenticated/dashboard/orders'
+    | '/_authenticated/dashboard/settings'
     | '/_authenticated/dashboard/checkout/$slug'
+    | '/api/public/hooks/campaigns-cron'
     | '/api/public/v1/sms'
     | '/api/public/webhooks/cinetpay'
     | '/api/public/webhooks/fedapay'
@@ -357,6 +383,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SolutionsRoute: typeof SolutionsRoute
   TarifsRoute: typeof TarifsRoute
+  ApiPublicHooksCampaignsCronRoute: typeof ApiPublicHooksCampaignsCronRoute
   ApiPublicV1SmsRoute: typeof ApiPublicV1SmsRoute
   ApiPublicWebhooksCinetpayRoute: typeof ApiPublicWebhooksCinetpayRoute
   ApiPublicWebhooksFedapayRoute: typeof ApiPublicWebhooksFedapayRoute
@@ -456,6 +483,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/dashboard/settings': {
+      id: '/_authenticated/dashboard/settings'
+      path: '/settings'
+      fullPath: '/dashboard/settings'
+      preLoaderRoute: typeof AuthenticatedDashboardSettingsRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
     '/_authenticated/dashboard/orders': {
       id: '/_authenticated/dashboard/orders'
       path: '/orders'
@@ -540,6 +574,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicV1SmsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/campaigns-cron': {
+      id: '/api/public/hooks/campaigns-cron'
+      path: '/api/public/hooks/campaigns-cron'
+      fullPath: '/api/public/hooks/campaigns-cron'
+      preLoaderRoute: typeof ApiPublicHooksCampaignsCronRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/dashboard/checkout/$slug': {
       id: '/_authenticated/dashboard/checkout/$slug'
       path: '/checkout/$slug'
@@ -573,6 +614,7 @@ interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardApiKeysRoute: typeof AuthenticatedDashboardApiKeysRoute
   AuthenticatedDashboardCampaignsRoute: typeof AuthenticatedDashboardCampaignsRoute
   AuthenticatedDashboardOrdersRoute: typeof AuthenticatedDashboardOrdersRoute
+  AuthenticatedDashboardSettingsRoute: typeof AuthenticatedDashboardSettingsRoute
   AuthenticatedDashboardCheckoutSlugRoute: typeof AuthenticatedDashboardCheckoutSlugRoute
 }
 
@@ -581,6 +623,7 @@ const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
     AuthenticatedDashboardApiKeysRoute: AuthenticatedDashboardApiKeysRoute,
     AuthenticatedDashboardCampaignsRoute: AuthenticatedDashboardCampaignsRoute,
     AuthenticatedDashboardOrdersRoute: AuthenticatedDashboardOrdersRoute,
+    AuthenticatedDashboardSettingsRoute: AuthenticatedDashboardSettingsRoute,
     AuthenticatedDashboardCheckoutSlugRoute:
       AuthenticatedDashboardCheckoutSlugRoute,
   }
@@ -615,6 +658,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SolutionsRoute: SolutionsRoute,
   TarifsRoute: TarifsRoute,
+  ApiPublicHooksCampaignsCronRoute: ApiPublicHooksCampaignsCronRoute,
   ApiPublicV1SmsRoute: ApiPublicV1SmsRoute,
   ApiPublicWebhooksCinetpayRoute: ApiPublicWebhooksCinetpayRoute,
   ApiPublicWebhooksFedapayRoute: ApiPublicWebhooksFedapayRoute,
