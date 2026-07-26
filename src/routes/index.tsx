@@ -49,10 +49,11 @@ function LandingPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 sm:max-w-md">
               <Link
-                to="/contact"
-                className="flex-1 bg-foreground text-background text-center py-4 px-6 rounded-sm font-semibold shadow-[var(--shadow-hero)] transition-transform active:scale-[0.98] hover:opacity-90"
+                to="/auth"
+                search={{ mode: "signup" }}
+                className="flex-1 bg-primary text-primary-foreground text-center py-4 px-6 rounded-sm font-semibold shadow-[var(--shadow-hero)] transition-transform active:scale-[0.98] hover:bg-primary-dark"
               >
-                Démarrer maintenant
+                Créer un compte gratuit
               </Link>
               <Link
                 to="/tarifs"

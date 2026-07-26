@@ -22,6 +22,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedDashboardSettingsRouteImport } from './routes/_authenticated/dashboard.settings'
 import { Route as AuthenticatedDashboardOrdersRouteImport } from './routes/_authenticated/dashboard.orders'
 import { Route as AuthenticatedDashboardCampaignsRouteImport } from './routes/_authenticated/dashboard.campaigns'
 import { Route as AuthenticatedDashboardApiKeysRouteImport } from './routes/_authenticated/dashboard.api-keys'
@@ -101,6 +102,12 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedDashboardSettingsRoute =
+  AuthenticatedDashboardSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const AuthenticatedDashboardOrdersRoute =
   AuthenticatedDashboardOrdersRouteImport.update({
     id: '/orders',
@@ -205,6 +212,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/api-keys': typeof AuthenticatedDashboardApiKeysRoute
   '/dashboard/campaigns': typeof AuthenticatedDashboardCampaignsRoute
   '/dashboard/orders': typeof AuthenticatedDashboardOrdersRoute
+  '/dashboard/settings': typeof AuthenticatedDashboardSettingsRoute
   '/dashboard/checkout/$slug': typeof AuthenticatedDashboardCheckoutSlugRoute
   '/api/public/hooks/campaigns-cron': typeof ApiPublicHooksCampaignsCronRoute
   '/api/public/v1/sms': typeof ApiPublicV1SmsRoute
@@ -233,6 +241,7 @@ export interface FileRoutesByTo {
   '/dashboard/api-keys': typeof AuthenticatedDashboardApiKeysRoute
   '/dashboard/campaigns': typeof AuthenticatedDashboardCampaignsRoute
   '/dashboard/orders': typeof AuthenticatedDashboardOrdersRoute
+  '/dashboard/settings': typeof AuthenticatedDashboardSettingsRoute
   '/dashboard/checkout/$slug': typeof AuthenticatedDashboardCheckoutSlugRoute
   '/api/public/hooks/campaigns-cron': typeof ApiPublicHooksCampaignsCronRoute
   '/api/public/v1/sms': typeof ApiPublicV1SmsRoute
@@ -263,6 +272,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/api-keys': typeof AuthenticatedDashboardApiKeysRoute
   '/_authenticated/dashboard/campaigns': typeof AuthenticatedDashboardCampaignsRoute
   '/_authenticated/dashboard/orders': typeof AuthenticatedDashboardOrdersRoute
+  '/_authenticated/dashboard/settings': typeof AuthenticatedDashboardSettingsRoute
   '/_authenticated/dashboard/checkout/$slug': typeof AuthenticatedDashboardCheckoutSlugRoute
   '/api/public/hooks/campaigns-cron': typeof ApiPublicHooksCampaignsCronRoute
   '/api/public/v1/sms': typeof ApiPublicV1SmsRoute
@@ -293,6 +303,7 @@ export interface FileRouteTypes {
     | '/dashboard/api-keys'
     | '/dashboard/campaigns'
     | '/dashboard/orders'
+    | '/dashboard/settings'
     | '/dashboard/checkout/$slug'
     | '/api/public/hooks/campaigns-cron'
     | '/api/public/v1/sms'
@@ -321,6 +332,7 @@ export interface FileRouteTypes {
     | '/dashboard/api-keys'
     | '/dashboard/campaigns'
     | '/dashboard/orders'
+    | '/dashboard/settings'
     | '/dashboard/checkout/$slug'
     | '/api/public/hooks/campaigns-cron'
     | '/api/public/v1/sms'
@@ -350,6 +362,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/api-keys'
     | '/_authenticated/dashboard/campaigns'
     | '/_authenticated/dashboard/orders'
+    | '/_authenticated/dashboard/settings'
     | '/_authenticated/dashboard/checkout/$slug'
     | '/api/public/hooks/campaigns-cron'
     | '/api/public/v1/sms'
@@ -469,6 +482,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin'
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/dashboard/settings': {
+      id: '/_authenticated/dashboard/settings'
+      path: '/settings'
+      fullPath: '/dashboard/settings'
+      preLoaderRoute: typeof AuthenticatedDashboardSettingsRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
     }
     '/_authenticated/dashboard/orders': {
       id: '/_authenticated/dashboard/orders'
@@ -594,6 +614,7 @@ interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardApiKeysRoute: typeof AuthenticatedDashboardApiKeysRoute
   AuthenticatedDashboardCampaignsRoute: typeof AuthenticatedDashboardCampaignsRoute
   AuthenticatedDashboardOrdersRoute: typeof AuthenticatedDashboardOrdersRoute
+  AuthenticatedDashboardSettingsRoute: typeof AuthenticatedDashboardSettingsRoute
   AuthenticatedDashboardCheckoutSlugRoute: typeof AuthenticatedDashboardCheckoutSlugRoute
 }
 
@@ -602,6 +623,7 @@ const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
     AuthenticatedDashboardApiKeysRoute: AuthenticatedDashboardApiKeysRoute,
     AuthenticatedDashboardCampaignsRoute: AuthenticatedDashboardCampaignsRoute,
     AuthenticatedDashboardOrdersRoute: AuthenticatedDashboardOrdersRoute,
+    AuthenticatedDashboardSettingsRoute: AuthenticatedDashboardSettingsRoute,
     AuthenticatedDashboardCheckoutSlugRoute:
       AuthenticatedDashboardCheckoutSlugRoute,
   }
