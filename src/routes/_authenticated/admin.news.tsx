@@ -43,12 +43,22 @@ function slugify(s: string) {
 
 function NewsAdmin() {
   const qc = useQueryClient();
-  const { data: items = [] } = useQuery({ queryKey: ["admin-news"], queryFn: () => listAllNews() });
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState<"all" | "draft" | "published">("all");
+  const [page, setPage] = useState(1);
+  const pageSize = 20;
+  const { data } = useQuery({
+    queryKey: ["admin-news", search, status, page],
+    queryFn: () => listAllNews({ data: { search, status, page, pageSize } }),
+  });
+  const items: any[] = (data as any)?.items ?? [];
+  const total: number = (data as any)?.total ?? 0;
   const [form, setForm] = useState(empty);
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const inv = () => qc.invalidateQueries({ queryKey: ["admin-news"] });
+
 
   const save = useMutation({
     mutationFn: (v: any) =>
@@ -261,7 +271,16 @@ function NewsAdmin() {
 
         {/* List */}
         <div className="space-y-3">
-          <div className="text-sm text-foreground/60">{items.length} article(s)</div>
+          <div className="flex flex-wrap items-center gap-2">
+            <input value={search} onChange={(e) => { setPage(1); setSearch(e.target.value); }} placeholder="Recherche titre/slug…" className="flex-1 min-w-[180px] border border-border rounded-sm px-3 py-2 text-sm" />
+            <select value={status} onChange={(e) => { setPage(1); setStatus(e.target.value as any); }} className="border border-border rounded-sm px-2 py-2 text-sm">
+              <option value="all">Tous</option>
+              <option value="draft">Brouillon</option>
+              <option value="published">Publié</option>
+            </select>
+          </div>
+          <div className="text-sm text-foreground/60">{total} article(s) — page {page}/{Math.max(1, Math.ceil(total / pageSize))}</div>
+
           {items.map((n: any) => (
             <div key={n.id} className="bg-background border border-border rounded-sm p-4">
               <div className="flex gap-3">
@@ -320,10 +339,15 @@ function NewsAdmin() {
           ))}
           {items.length === 0 && (
             <div className="p-6 text-sm text-center text-foreground/50 border border-dashed border-border rounded-sm">
-              Aucune actualité. Créez le premier article.
+              Aucune actualité.
             </div>
           )}
+          <div className="flex justify-between items-center pt-2">
+            <button disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))} className="text-xs border border-border rounded-sm px-3 py-1.5 disabled:opacity-40">← Préc.</button>
+            <button disabled={page * pageSize >= total} onClick={() => setPage((p) => p + 1)} className="text-xs border border-border rounded-sm px-3 py-1.5 disabled:opacity-40">Suiv. →</button>
+          </div>
         </div>
+
       </div>
     </DashboardLayout>
   );

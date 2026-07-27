@@ -51,9 +51,14 @@ function NewsIndex() {
                   {c.name}
                 </Link>
               ))}
-              {allTags.map((t) => (
-                <Link key={t} to="/actualites/tag/$slug" params={{ slug: t as string }} className="text-xs px-3 py-1.5 bg-muted rounded-full hover:bg-primary/10 hover:text-primary">
-                  #{t as string}
+              {allTags.map((t) => {
+                const tag = String(t);
+                return (
+                <Link key={tag} to="/actualites/tag/$slug" params={{ slug: tag }} className="text-xs px-3 py-1.5 bg-muted rounded-full hover:bg-primary/10 hover:text-primary">
+                  #{tag}
+                </Link>
+              );})}
+
                 </Link>
               ))}
             </div>
