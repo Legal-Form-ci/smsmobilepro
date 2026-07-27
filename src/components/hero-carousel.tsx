@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { listPublishedNews } from "@/lib/news.functions";
+import { listPublishedNews, listActiveHeroSlides } from "@/lib/news.functions";
 import heroSms from "@/assets/hero-sms-1.jpg";
 import heroEmail from "@/assets/hero-email-1.jpg";
 import heroUemoa from "@/assets/hero-uemoa.jpg";
@@ -15,76 +15,84 @@ type Slide = {
   subtitle?: string;
   href?: string;
   cta?: string;
+  duration_ms?: number;
+  pause_on_hover?: boolean;
 };
 
 const DEFAULT_SLIDES: Slide[] = [
-  {
-    key: "sms",
-    src: heroSms,
-    eyebrow: "SMS Marketing",
-    title: "Vos promos livrées en 3 secondes",
-    subtitle: "98,2% de délivrabilité sur les 8 pays UEMOA.",
-    href: "/solutions",
-    cta: "Découvrir",
-  },
-  {
-    key: "money",
-    src: heroMoney,
-    eyebrow: "Mobile Money",
-    title: "Alertes de paiement instantanées",
-    subtitle: "Orange Money, MTN MoMo, Wave, Moov.",
-    href: "/solutions",
-    cta: "Voir les cas d'usage",
-  },
-  {
-    key: "uemoa",
-    src: heroUemoa,
-    eyebrow: "Zone UEMOA",
-    title: "8 pays. Une seule plateforme.",
-    subtitle: "Côte d'Ivoire, Sénégal, Mali, Burkina, Bénin, Togo, Niger, Guinée-Bissau.",
-    href: "/tarifs",
-    cta: "Voir les tarifs",
-  },
-  {
-    key: "email",
-    src: heroEmail,
-    eyebrow: "Omnicanal",
-    title: "SMS + Email + WhatsApp",
-    subtitle: "Pilotez toutes vos campagnes depuis un seul dashboard.",
-    href: "/solutions",
-    cta: "Explorer",
-  },
+  { key: "sms", src: heroSms, eyebrow: "SMS Marketing", title: "Vos promos livrées en 3 secondes", subtitle: "98,2% de délivrabilité sur les 8 pays UEMOA.", href: "/solutions", cta: "Découvrir" },
+  { key: "money", src: heroMoney, eyebrow: "Mobile Money", title: "Alertes de paiement instantanées", subtitle: "Orange Money, MTN MoMo, Wave, Moov.", href: "/solutions", cta: "Voir les cas d'usage" },
+  { key: "uemoa", src: heroUemoa, eyebrow: "Zone UEMOA", title: "8 pays. Une seule plateforme.", subtitle: "Côte d'Ivoire, Sénégal, Mali, Burkina, Bénin, Togo, Niger, Guinée-Bissau.", href: "/tarifs", cta: "Voir les tarifs" },
+  { key: "email", src: heroEmail, eyebrow: "Omnicanal", title: "SMS + Email + WhatsApp", subtitle: "Pilotez toutes vos campagnes depuis un seul dashboard.", href: "/solutions", cta: "Explorer" },
 ];
 
 export function HeroCarousel() {
+  const { data: cmsSlides = [] } = useQuery({
+    queryKey: ["hero-slides"],
+    queryFn: () => listActiveHeroSlides(),
+    staleTime: 60_000,
+  });
   const { data: news = [] } = useQuery({
     queryKey: ["public-news-hero"],
-    queryFn: () => listPublishedNews(),
+    queryFn: () => listPublishedNews({ data: { limit: 3 } }),
     staleTime: 60_000,
   });
 
-  const newsSlides: Slide[] = news.slice(0, 3).map((n: any) => ({
-    key: `news-${n.id}`,
-    src: n.cover_image_url || heroSms,
-    eyebrow: "Actualité",
-    title: n.title,
-    subtitle: n.excerpt || undefined,
-    href: `/actualites/${n.slug}`,
-    cta: "Lire l'article",
-  }));
+  const slides = useMemo<Slide[]>(() => {
+    const cms: Slide[] = (cmsSlides as any[]).map((s) => ({
+      key: `cms-${s.id}`,
+      src: s.media_url,
+      eyebrow: s.eyebrow || s.kind?.toUpperCase() || "",
+      title: s.title,
+      subtitle: s.subtitle || undefined,
+      href: s.href || undefined,
+      cta: s.cta || undefined,
+      duration_ms: s.duration_ms,
+      pause_on_hover: s.pause_on_hover,
+    }));
+    const newsSlides: Slide[] = (news as any[]).slice(0, 3).map((n) => ({
+      key: `news-${n.id}`,
+      src: n.cover_image_url || heroSms,
+      eyebrow: "Actualité",
+      title: n.title,
+      subtitle: n.excerpt || undefined,
+      href: `/actualites/${n.slug}`,
+      cta: "Lire l'article",
+    }));
+    const merged = [...cms, ...newsSlides, ...DEFAULT_SLIDES];
+    // dedupe by key
+    const seen = new Set<string>();
+    return merged.filter((s) => (seen.has(s.key) ? false : (seen.add(s.key), true)));
+  }, [cmsSlides, news]);
 
-  const slides = [...newsSlides, ...DEFAULT_SLIDES];
   const [idx, setIdx] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    const t = setInterval(() => setIdx((i) => (i + 1) % slides.length), 5000);
-    return () => clearInterval(t);
-  }, [slides.length]);
+    if (paused || slides.length <= 1) return;
+    const duration = slides[idx]?.duration_ms ?? 5000;
+    timerRef.current = setTimeout(() => setIdx((i) => (i + 1) % slides.length), duration);
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [idx, paused, slides]);
 
-  const current = slides[idx];
+  useEffect(() => {
+    if (idx >= slides.length) setIdx(0);
+  }, [slides.length, idx]);
+
+  const current = slides[idx] ?? slides[0];
+  if (!current) return null;
+
+  const anyPauseOnHover = slides.some((s) => s.pause_on_hover !== false);
 
   return (
-    <div className="relative w-full aspect-[4/5] sm:aspect-square lg:aspect-[4/5] overflow-hidden rounded-sm bg-background border border-border shadow-[var(--shadow-hero)]">
+    <div
+      className="relative w-full aspect-[4/5] sm:aspect-square lg:aspect-[4/5] overflow-hidden rounded-sm bg-background border border-border shadow-[var(--shadow-hero)]"
+      onMouseEnter={() => anyPauseOnHover && setPaused(true)}
+      onMouseLeave={() => anyPauseOnHover && setPaused(false)}
+    >
       {slides.map((s, i) => (
         <img
           key={s.key}
@@ -112,16 +120,26 @@ export function HeroCarousel() {
           <p className="mt-2 text-sm sm:text-base text-white/80 max-w-md">{current.subtitle}</p>
         )}
         {current.href && current.cta && (
-          <Link
-            to={current.href as any}
-            className="inline-flex items-center gap-1 mt-4 text-sm font-semibold border-b-2 border-white/70 hover:border-white pb-0.5"
-          >
-            {current.cta} →
-          </Link>
+          current.href.startsWith("http") ? (
+            <a
+              href={current.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 mt-4 text-sm font-semibold border-b-2 border-white/70 hover:border-white pb-0.5"
+            >
+              {current.cta} →
+            </a>
+          ) : (
+            <Link
+              to={current.href as any}
+              className="inline-flex items-center gap-1 mt-4 text-sm font-semibold border-b-2 border-white/70 hover:border-white pb-0.5"
+            >
+              {current.cta} →
+            </Link>
+          )
         )}
       </div>
 
-      {/* dots */}
       <div className="absolute top-4 right-4 flex gap-1.5">
         {slides.map((_, i) => (
           <button
