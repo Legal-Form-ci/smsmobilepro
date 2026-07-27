@@ -96,7 +96,7 @@ function AuthPage() {
     try {
       const resolved = await resolveLoginIdentifier({ data: { identifier } });
       if (!resolved.email) throw new Error("Identifiant introuvable.");
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      const { error } = await supabase.auth.resetPasswordForEmail(resolved.email, {
         redirectTo: window.location.origin + "/reset-password",
       });
       if (error) throw error;
