@@ -375,6 +375,7 @@ export type Database = {
           phone: string | null
           sms_credits: number
           updated_at: string
+          username: string | null
         }
         Insert: {
           company?: string | null
@@ -387,6 +388,7 @@ export type Database = {
           phone?: string | null
           sms_credits?: number
           updated_at?: string
+          username?: string | null
         }
         Update: {
           company?: string | null
@@ -399,6 +401,7 @@ export type Database = {
           phone?: string | null
           sms_credits?: number
           updated_at?: string
+          username?: string | null
         }
         Relationships: []
       }

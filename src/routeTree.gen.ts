@@ -21,6 +21,8 @@ import { Route as ActualitesRouteImport } from './routes/actualites'
 import { Route as AProposRouteImport } from './routes/a-propos'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as Char126oauthInitiateRouteImport } from './routes/~oauth.initiate'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as ActualitesSlugRouteImport } from './routes/actualites.$slug'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
@@ -99,6 +101,16 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const Char126oauthInitiateRoute = Char126oauthInitiateRouteImport.update({
+  id: '/~oauth/initiate',
+  path: '/~oauth/initiate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/callback',
+  path: '/callback',
+  getParentRoute: () => AuthRoute,
 } as any)
 const ActualitesSlugRoute = ActualitesSlugRouteImport.update({
   id: '/$slug',
@@ -213,7 +225,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/a-propos': typeof AProposRoute
   '/actualites': typeof ActualitesRouteWithChildren
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/conditions': typeof ConditionsRoute
   '/confidentialite': typeof ConfidentialiteRoute
   '/contact': typeof ContactRoute
@@ -224,6 +236,8 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/actualites/$slug': typeof ActualitesSlugRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/~oauth/initiate': typeof Char126oauthInitiateRoute
   '/admin/campaigns': typeof AuthenticatedAdminCampaignsRoute
   '/admin/contacts': typeof AuthenticatedAdminContactsRoute
   '/admin/news': typeof AuthenticatedAdminNewsRoute
@@ -245,7 +259,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/a-propos': typeof AProposRoute
   '/actualites': typeof ActualitesRouteWithChildren
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/conditions': typeof ConditionsRoute
   '/confidentialite': typeof ConfidentialiteRoute
   '/contact': typeof ContactRoute
@@ -256,6 +270,8 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/actualites/$slug': typeof ActualitesSlugRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/~oauth/initiate': typeof Char126oauthInitiateRoute
   '/admin/campaigns': typeof AuthenticatedAdminCampaignsRoute
   '/admin/contacts': typeof AuthenticatedAdminContactsRoute
   '/admin/news': typeof AuthenticatedAdminNewsRoute
@@ -279,7 +295,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/a-propos': typeof AProposRoute
   '/actualites': typeof ActualitesRouteWithChildren
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/conditions': typeof ConditionsRoute
   '/confidentialite': typeof ConfidentialiteRoute
   '/contact': typeof ContactRoute
@@ -290,6 +306,8 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/actualites/$slug': typeof ActualitesSlugRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/~oauth/initiate': typeof Char126oauthInitiateRoute
   '/_authenticated/admin/campaigns': typeof AuthenticatedAdminCampaignsRoute
   '/_authenticated/admin/contacts': typeof AuthenticatedAdminContactsRoute
   '/_authenticated/admin/news': typeof AuthenticatedAdminNewsRoute
@@ -324,6 +342,8 @@ export interface FileRouteTypes {
     | '/admin'
     | '/dashboard'
     | '/actualites/$slug'
+    | '/auth/callback'
+    | '/~oauth/initiate'
     | '/admin/campaigns'
     | '/admin/contacts'
     | '/admin/news'
@@ -356,6 +376,8 @@ export interface FileRouteTypes {
     | '/admin'
     | '/dashboard'
     | '/actualites/$slug'
+    | '/auth/callback'
+    | '/~oauth/initiate'
     | '/admin/campaigns'
     | '/admin/contacts'
     | '/admin/news'
@@ -389,6 +411,8 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
     | '/actualites/$slug'
+    | '/auth/callback'
+    | '/~oauth/initiate'
     | '/_authenticated/admin/campaigns'
     | '/_authenticated/admin/contacts'
     | '/_authenticated/admin/news'
@@ -412,7 +436,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AProposRoute: typeof AProposRoute
   ActualitesRoute: typeof ActualitesRouteWithChildren
-  AuthRoute: typeof AuthRoute
+  AuthRoute: typeof AuthRouteWithChildren
   ConditionsRoute: typeof ConditionsRoute
   ConfidentialiteRoute: typeof ConfidentialiteRoute
   ContactRoute: typeof ContactRoute
@@ -420,6 +444,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SolutionsRoute: typeof SolutionsRoute
   TarifsRoute: typeof TarifsRoute
+  Char126oauthInitiateRoute: typeof Char126oauthInitiateRoute
   ApiPublicHooksCampaignsCronRoute: typeof ApiPublicHooksCampaignsCronRoute
   ApiPublicV1SmsRoute: typeof ApiPublicV1SmsRoute
   ApiPublicWebhooksCinetpayRoute: typeof ApiPublicWebhooksCinetpayRoute
@@ -512,6 +537,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/~oauth/initiate': {
+      id: '/~oauth/initiate'
+      path: '/~oauth/initiate'
+      fullPath: '/~oauth/initiate'
+      preLoaderRoute: typeof Char126oauthInitiateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/actualites/$slug': {
       id: '/actualites/$slug'
@@ -718,12 +757,22 @@ const ActualitesRouteWithChildren = ActualitesRoute._addFileChildren(
   ActualitesRouteChildren,
 )
 
+interface AuthRouteChildren {
+  AuthCallbackRoute: typeof AuthCallbackRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthCallbackRoute: AuthCallbackRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AProposRoute: AProposRoute,
   ActualitesRoute: ActualitesRouteWithChildren,
-  AuthRoute: AuthRoute,
+  AuthRoute: AuthRouteWithChildren,
   ConditionsRoute: ConditionsRoute,
   ConfidentialiteRoute: ConfidentialiteRoute,
   ContactRoute: ContactRoute,
@@ -731,6 +780,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SolutionsRoute: SolutionsRoute,
   TarifsRoute: TarifsRoute,
+  Char126oauthInitiateRoute: Char126oauthInitiateRoute,
   ApiPublicHooksCampaignsCronRoute: ApiPublicHooksCampaignsCronRoute,
   ApiPublicV1SmsRoute: ApiPublicV1SmsRoute,
   ApiPublicWebhooksCinetpayRoute: ApiPublicWebhooksCinetpayRoute,

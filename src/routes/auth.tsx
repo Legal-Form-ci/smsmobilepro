@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
+import { resolveLoginIdentifier } from "@/lib/auth.functions";
 import { toast } from "sonner";
 
 const searchSchema = z.object({
@@ -26,7 +27,7 @@ function AuthPage() {
   const { redirect, mode: initialMode } = useSearch({ from: "/auth" });
   const navigate = useNavigate();
   const [mode, setMode] = useState<"login" | "signup">(initialMode ?? "login");
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
@@ -35,15 +36,15 @@ function AuthPage() {
   const [marketing, setMarketing] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const targetPath = sanitizeRedirect(redirect);
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) {
-        navigate({ to: (redirect as any) ?? "/dashboard", replace: true });
+        navigate({ to: targetPath as any, replace: true });
       }
     });
-  }, [navigate, redirect]);
-
-  const targetPath = redirect ?? "/dashboard";
+  }, [navigate, targetPath]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -55,10 +56,10 @@ function AuthPage() {
     try {
       if (mode === "signup") {
         const { error } = await supabase.auth.signUp({
-          email,
+          email: identifier.trim().toLowerCase(),
           password,
           options: {
-            emailRedirectTo: window.location.origin + targetPath,
+            emailRedirectTo: window.location.origin + "/auth/callback?redirect=" + encodeURIComponent(targetPath),
             data: {
               full_name: fullName,
               phone,
@@ -75,7 +76,9 @@ function AuthPage() {
         } catch { /* profile trigger may not be ready yet; ignore */ }
         toast.success("Compte créé. Vous êtes connecté.");
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const resolved = await resolveLoginIdentifier({ data: { identifier } });
+        if (!resolved.email) throw new Error("Identifiant introuvable. Utilisez votre email ou votre nom d'utilisateur.");
+        const { error } = await supabase.auth.signInWithPassword({ email: resolved.email, password });
         if (error) throw error;
         toast.success("Connexion réussie.");
       }
@@ -88,10 +91,12 @@ function AuthPage() {
   }
 
   async function handleForgot() {
-    if (!email) return toast.error("Entrez votre email d'abord.");
+    if (!identifier) return toast.error("Entrez votre email d'abord.");
     setLoading(true);
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      const resolved = await resolveLoginIdentifier({ data: { identifier } });
+      if (!resolved.email) throw new Error("Identifiant introuvable.");
+      const { error } = await supabase.auth.resetPasswordForEmail(resolved.email, {
         redirectTo: window.location.origin + "/reset-password",
       });
       if (error) throw error;
@@ -107,8 +112,10 @@ function AuthPage() {
   async function handleGoogle() {
     setLoading(true);
     try {
+      sessionStorage.setItem("smspro_auth_redirect", targetPath);
       const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin + "/auth?redirect=" + encodeURIComponent(targetPath),
+        redirect_uri: buildOAuthRedirectUri(targetPath),
+        extraParams: { prompt: "select_account" },
       });
       if (result.error) {
         toast.error("Erreur Google: " + (result.error as any).message);
@@ -138,9 +145,14 @@ function AuthPage() {
           <div className="text-xs font-mono uppercase tracking-widest text-primary mb-3">
             {mode === "login" ? "Connexion" : "Créer un compte"}
           </div>
-          <h1 className="font-display text-3xl font-extrabold mb-6">
+          <h1 className="font-display text-3xl font-extrabold mb-2">
             {mode === "login" ? "Accédez à votre espace" : "Rejoignez SMS Pro Mobile"}
           </h1>
+          <p className="text-sm text-foreground/60 mb-6">
+            {mode === "login"
+              ? "Connectez-vous avec votre email ou l'identifiant super admin smsmobilepro."
+              : "Créez votre compte client, puis gérez vos campagnes depuis le tableau de bord."}
+          </p>
 
           <button
             type="button"
@@ -169,7 +181,7 @@ function AuthPage() {
                 <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Téléphone (optionnel)" className="w-full px-4 py-3 border border-border rounded-sm text-sm bg-background" />
               </>
             )}
-            <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="w-full px-4 py-3 border border-border rounded-sm text-sm bg-background" />
+            <input required type={mode === "signup" ? "email" : "text"} value={identifier} onChange={(e) => setIdentifier(e.target.value)} placeholder={mode === "signup" ? "Email" : "Email ou identifiant"} autoComplete="username" className="w-full px-4 py-3 border border-border rounded-sm text-sm bg-background" />
             <input required type="password" minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Mot de passe (min. 6)" className="w-full px-4 py-3 border border-border rounded-sm text-sm bg-background" />
 
             {mode === "signup" && (
@@ -219,4 +231,19 @@ function AuthPage() {
       </main>
     </div>
   );
+}
+
+function sanitizeRedirect(value?: string) {
+  if (!value || !value.startsWith("/") || value.startsWith("//")) return "/dashboard";
+  return value;
+}
+
+function buildOAuthRedirectUri(targetPath: string) {
+  const hostedOrigin = "https://smsmobilepro.lovable.app";
+  const current = new URL(window.location.href);
+  const hosted = current.hostname.endsWith(".lovable.app") || current.hostname.endsWith(".lovable.dev");
+  const origin = hosted ? current.origin : hostedOrigin;
+  const callback = new URL("/auth/callback", origin);
+  callback.searchParams.set("redirect", targetPath);
+  return callback.toString();
 }
