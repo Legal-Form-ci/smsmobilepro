@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, UserRound, X } from "lucide-react";
 import { track } from "@/lib/analytics";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -23,7 +23,7 @@ export function SiteHeader() {
 
   return (
     <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
-      <div className="mx-auto max-w-6xl px-4 sm:px-8 py-3 flex items-center justify-between gap-3">
+        <div className="mx-auto max-w-6xl px-4 sm:px-8 py-3 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
         <Link to="/" className="flex flex-col leading-none shrink-0" onClick={() => setOpen(false)}>
           <span className="font-display font-black text-primary tracking-tighter text-lg sm:text-xl">
             SMS PRO
@@ -50,24 +50,16 @@ export function SiteHeader() {
               Dashboard
             </Link>
           ) : (
-            <>
-              <Link
-                to="/auth"
-                search={{ mode: "login" }}
-                onClick={() => track("cta_login_click", { location: "header" })}
-                className="hidden sm:inline text-xs sm:text-sm font-semibold hover:text-primary shrink-0"
-              >
-                Se connecter
-              </Link>
-              <Link
-                to="/auth"
-                search={{ mode: "signup" }}
-                onClick={() => track("cta_signup_click", { location: "header" })}
-                className="bg-primary text-primary-foreground px-3 sm:px-4 py-2 rounded-sm text-xs sm:text-sm font-semibold hover:bg-primary-dark transition-colors active:scale-95 shrink-0"
-              >
-                S'inscrire
-              </Link>
-            </>
+            <Link
+              to="/auth"
+              search={{ mode: "login" }}
+              onClick={() => track("cta_login_click", { location: "header_icon" })}
+              className="grid h-10 w-10 shrink-0 place-items-center rounded-sm bg-primary text-primary-foreground hover:bg-primary-dark transition-colors active:scale-95"
+              aria-label="Se connecter"
+              title="Se connecter"
+            >
+              <UserRound className="h-5 w-5" />
+            </Link>
           )}
 
           <button
@@ -100,8 +92,9 @@ export function SiteHeader() {
                 to="/auth"
                 search={{ mode: "login" }}
                 onClick={() => setOpen(false)}
-                className="py-3 px-2 text-sm font-semibold hover:text-primary"
+                className="py-3 px-2 text-sm font-semibold hover:text-primary flex items-center gap-2"
               >
+                <UserRound className="h-4 w-4" />
                 Se connecter
               </Link>
             )}

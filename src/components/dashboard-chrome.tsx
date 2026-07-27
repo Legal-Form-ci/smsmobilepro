@@ -52,14 +52,14 @@ export function DashboardLayout({ children, title }: { children: React.ReactNode
   return (
     <div className="min-h-screen bg-muted flex flex-col">
       <header className="bg-background border-b border-border sticky top-0 z-40">
-        <div className="mx-auto max-w-7xl px-4 sm:px-8 py-3 flex items-center justify-between gap-3">
-          <Link to="/dashboard" className="flex flex-col leading-none">
+        <div className="mx-auto max-w-7xl px-4 sm:px-8 py-3 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
+          <Link to="/dashboard" className="flex min-w-0 flex-col leading-none">
             <span className="font-display font-black text-primary tracking-tighter text-lg">SMS PRO</span>
             <span className="text-[10px] font-mono tracking-widest text-foreground/50 uppercase">
               {isAdmin ? "Admin" : "Espace client"}
             </span>
           </Link>
-          <div className="flex items-center gap-3">
+          <div className="flex min-w-0 items-center justify-end gap-2 sm:gap-3">
             <span className="hidden sm:inline text-xs font-mono text-foreground/60 truncate max-w-[200px]">{email}</span>
             <button onClick={handleSignOut} className="p-2 rounded-sm border border-border hover:bg-muted" aria-label="Déconnexion">
               <LogOut className="h-4 w-4" />
@@ -71,7 +71,7 @@ export function DashboardLayout({ children, title }: { children: React.ReactNode
         </div>
       </header>
 
-      <div className="flex-1 mx-auto max-w-7xl w-full px-4 sm:px-8 py-6 grid md:grid-cols-[220px_1fr] gap-6">
+       <div className="flex-1 mx-auto max-w-7xl w-full px-4 sm:px-8 py-6 grid md:grid-cols-[220px_minmax(0,1fr)] gap-6">
         <aside className={(open ? "block" : "hidden") + " md:block"}>
           <nav className="bg-background border border-border rounded-sm p-2 sticky top-20">
             {items.map((n) => {
