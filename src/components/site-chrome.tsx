@@ -105,6 +105,8 @@ export function SiteHeader() {
   );
 }
 
+import ikoffiAsset from "@/assets/ikoffi.jpg.asset.json";
+
 export function SiteFooter() {
   return (
     <footer className="px-4 sm:px-8 py-12 bg-background border-t border-border">
@@ -123,31 +125,16 @@ export function SiteFooter() {
             <li className="text-[10px] font-mono uppercase tracking-widest text-foreground/40">
               Plateforme
             </li>
-            <li>
-              <Link to="/solutions" className="hover:text-primary">
-                Solutions
-              </Link>
-            </li>
-            <li>
-              <Link to="/tarifs" className="hover:text-primary">
-                Tarifs
-              </Link>
-            </li>
-            <li>
-              <Link to="/a-propos" className="hover:text-primary">
-                À propos
-              </Link>
-            </li>
+            <li><Link to="/solutions" className="hover:text-primary">Solutions</Link></li>
+            <li><Link to="/tarifs" className="hover:text-primary">Tarifs</Link></li>
+            <li><Link to="/a-propos" className="hover:text-primary">À propos</Link></li>
+            <li><Link to="/actualites" className="hover:text-primary">Actualités</Link></li>
           </ul>
           <ul className="space-y-2 text-sm font-semibold">
             <li className="text-[10px] font-mono uppercase tracking-widest text-foreground/40">
               Contact
             </li>
-            <li>
-              <Link to="/contact" className="hover:text-primary">
-                Nous contacter
-              </Link>
-            </li>
+            <li><Link to="/contact" className="hover:text-primary">Nous contacter</Link></li>
             <li>
               <a
                 href="https://wa.me/2250700000000"
@@ -164,18 +151,40 @@ export function SiteFooter() {
             <li className="text-[10px] font-mono uppercase tracking-widest text-foreground/40">
               Légal
             </li>
-            <li>
-              <Link to="/confidentialite" className="hover:text-primary">
-                Confidentialité
-              </Link>
-            </li>
-            <li>
-              <Link to="/conditions" className="hover:text-primary">
-                Conditions d'utilisation
-              </Link>
-            </li>
+            <li><Link to="/confidentialite" className="hover:text-primary">Confidentialité</Link></li>
+            <li><Link to="/conditions" className="hover:text-primary">Conditions d'utilisation</Link></li>
           </ul>
         </div>
+
+        {/* Author credit */}
+        <div className="border-t border-border pt-6 flex flex-wrap items-center gap-3 text-xs text-foreground/60">
+          <img
+            src={ikoffiAsset.url}
+            alt="Inocent KOFFI"
+            className="h-10 w-10 rounded-full object-cover border border-border shrink-0"
+            loading="lazy"
+          />
+          <span>Par</span>
+          <a
+            href="https://ikoffi.agricapital.ci"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-foreground hover:text-primary"
+          >
+            Inocent KOFFI
+          </a>
+          <span aria-hidden>·</span>
+          <a
+            href="https://wa.me/2250759566087"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => track("cta_whatsapp_click", { location: "footer_author" })}
+            className="font-semibold text-foreground hover:text-primary"
+          >
+            +225 07 59 56 60 87
+          </a>
+        </div>
+
         <div className="text-[10px] text-foreground/30 font-mono border-t border-border pt-6">
           © 2026 SMS PRO MOBILE. TOUS DROITS RÉSERVÉS.
         </div>

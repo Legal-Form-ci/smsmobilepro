@@ -232,9 +232,88 @@ export type Database = {
         }
         Relationships: []
       }
+      hero_slides: {
+        Row: {
+          created_at: string
+          cta: string | null
+          duration_ms: number
+          eyebrow: string
+          href: string | null
+          id: string
+          is_active: boolean
+          kind: string
+          media_url: string
+          pause_on_hover: boolean
+          position: number
+          subtitle: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          cta?: string | null
+          duration_ms?: number
+          eyebrow?: string
+          href?: string | null
+          id?: string
+          is_active?: boolean
+          kind?: string
+          media_url: string
+          pause_on_hover?: boolean
+          position?: number
+          subtitle?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          cta?: string | null
+          duration_ms?: number
+          eyebrow?: string
+          href?: string | null
+          id?: string
+          is_active?: boolean
+          kind?: string
+          media_url?: string
+          pause_on_hover?: boolean
+          position?: number
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      news_categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       news_posts: {
         Row: {
           author_id: string | null
+          category_id: string | null
           content: string
           cover_image_url: string | null
           created_at: string
@@ -243,11 +322,13 @@ export type Database = {
           published_at: string | null
           slug: string
           status: string
+          tags: string[]
           title: string
           updated_at: string
         }
         Insert: {
           author_id?: string | null
+          category_id?: string | null
           content?: string
           cover_image_url?: string | null
           created_at?: string
@@ -256,11 +337,13 @@ export type Database = {
           published_at?: string | null
           slug: string
           status?: string
+          tags?: string[]
           title: string
           updated_at?: string
         }
         Update: {
           author_id?: string | null
+          category_id?: string | null
           content?: string
           cover_image_url?: string | null
           created_at?: string
@@ -269,10 +352,19 @@ export type Database = {
           published_at?: string | null
           slug?: string
           status?: string
+          tags?: string[]
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "news_posts_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "news_categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       orders: {
         Row: {
@@ -484,7 +576,9 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      autopublish_news: { Args: never; Returns: undefined }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
     }
     Enums: {
       app_role: "admin" | "client"

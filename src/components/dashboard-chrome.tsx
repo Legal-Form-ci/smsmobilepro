@@ -20,6 +20,8 @@ const NAV: NavItem[] = [
   { to: "/admin/campaigns", label: "Toutes campagnes", admin: true },
   { to: "/admin/contacts", label: "Messages contact", admin: true },
   { to: "/admin/news", label: "Actualités (CMS)", admin: true },
+  { to: "/admin/news-categories", label: "Catégories & tags", admin: true },
+  { to: "/admin/hero", label: "Carousel Hero", admin: true },
 ];
 
 export function DashboardLayout({ children, title }: { children: React.ReactNode; title: string }) {
