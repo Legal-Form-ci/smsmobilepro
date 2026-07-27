@@ -26,6 +26,8 @@ import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as ActualitesSlugRouteImport } from './routes/actualites.$slug'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as ActualitesTagSlugRouteImport } from './routes/actualites.tag.$slug'
+import { Route as ActualitesCategorieSlugRouteImport } from './routes/actualites.categorie.$slug'
 import { Route as AuthenticatedDashboardSettingsRouteImport } from './routes/_authenticated/dashboard.settings'
 import { Route as AuthenticatedDashboardOrdersRouteImport } from './routes/_authenticated/dashboard.orders'
 import { Route as AuthenticatedDashboardCampaignsRouteImport } from './routes/_authenticated/dashboard.campaigns'
@@ -33,7 +35,9 @@ import { Route as AuthenticatedDashboardApiKeysRouteImport } from './routes/_aut
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminPackagesRouteImport } from './routes/_authenticated/admin.packages'
 import { Route as AuthenticatedAdminOrdersRouteImport } from './routes/_authenticated/admin.orders'
+import { Route as AuthenticatedAdminNewsCategoriesRouteImport } from './routes/_authenticated/admin.news-categories'
 import { Route as AuthenticatedAdminNewsRouteImport } from './routes/_authenticated/admin.news'
+import { Route as AuthenticatedAdminHeroRouteImport } from './routes/_authenticated/admin.hero'
 import { Route as AuthenticatedAdminContactsRouteImport } from './routes/_authenticated/admin.contacts'
 import { Route as AuthenticatedAdminCampaignsRouteImport } from './routes/_authenticated/admin.campaigns'
 import { Route as ApiPublicWebhooksNmgroupeRouteImport } from './routes/api/public/webhooks/nmgroupe'
@@ -127,6 +131,16 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ActualitesTagSlugRoute = ActualitesTagSlugRouteImport.update({
+  id: '/tag/$slug',
+  path: '/tag/$slug',
+  getParentRoute: () => ActualitesRoute,
+} as any)
+const ActualitesCategorieSlugRoute = ActualitesCategorieSlugRouteImport.update({
+  id: '/categorie/$slug',
+  path: '/categorie/$slug',
+  getParentRoute: () => ActualitesRoute,
+} as any)
 const AuthenticatedDashboardSettingsRoute =
   AuthenticatedDashboardSettingsRouteImport.update({
     id: '/settings',
@@ -168,9 +182,20 @@ const AuthenticatedAdminOrdersRoute =
     path: '/orders',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminNewsCategoriesRoute =
+  AuthenticatedAdminNewsCategoriesRouteImport.update({
+    id: '/news-categories',
+    path: '/news-categories',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminNewsRoute = AuthenticatedAdminNewsRouteImport.update({
   id: '/news',
   path: '/news',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminHeroRoute = AuthenticatedAdminHeroRouteImport.update({
+  id: '/hero',
+  path: '/hero',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
 const AuthenticatedAdminContactsRoute =
@@ -240,7 +265,9 @@ export interface FileRoutesByFullPath {
   '/~oauth/initiate': typeof Char126oauthInitiateRoute
   '/admin/campaigns': typeof AuthenticatedAdminCampaignsRoute
   '/admin/contacts': typeof AuthenticatedAdminContactsRoute
+  '/admin/hero': typeof AuthenticatedAdminHeroRoute
   '/admin/news': typeof AuthenticatedAdminNewsRoute
+  '/admin/news-categories': typeof AuthenticatedAdminNewsCategoriesRoute
   '/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/admin/packages': typeof AuthenticatedAdminPackagesRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -248,6 +275,8 @@ export interface FileRoutesByFullPath {
   '/dashboard/campaigns': typeof AuthenticatedDashboardCampaignsRoute
   '/dashboard/orders': typeof AuthenticatedDashboardOrdersRoute
   '/dashboard/settings': typeof AuthenticatedDashboardSettingsRoute
+  '/actualites/categorie/$slug': typeof ActualitesCategorieSlugRoute
+  '/actualites/tag/$slug': typeof ActualitesTagSlugRoute
   '/dashboard/checkout/$slug': typeof AuthenticatedDashboardCheckoutSlugRoute
   '/api/public/hooks/campaigns-cron': typeof ApiPublicHooksCampaignsCronRoute
   '/api/public/v1/sms': typeof ApiPublicV1SmsRoute
@@ -274,7 +303,9 @@ export interface FileRoutesByTo {
   '/~oauth/initiate': typeof Char126oauthInitiateRoute
   '/admin/campaigns': typeof AuthenticatedAdminCampaignsRoute
   '/admin/contacts': typeof AuthenticatedAdminContactsRoute
+  '/admin/hero': typeof AuthenticatedAdminHeroRoute
   '/admin/news': typeof AuthenticatedAdminNewsRoute
+  '/admin/news-categories': typeof AuthenticatedAdminNewsCategoriesRoute
   '/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/admin/packages': typeof AuthenticatedAdminPackagesRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -282,6 +313,8 @@ export interface FileRoutesByTo {
   '/dashboard/campaigns': typeof AuthenticatedDashboardCampaignsRoute
   '/dashboard/orders': typeof AuthenticatedDashboardOrdersRoute
   '/dashboard/settings': typeof AuthenticatedDashboardSettingsRoute
+  '/actualites/categorie/$slug': typeof ActualitesCategorieSlugRoute
+  '/actualites/tag/$slug': typeof ActualitesTagSlugRoute
   '/dashboard/checkout/$slug': typeof AuthenticatedDashboardCheckoutSlugRoute
   '/api/public/hooks/campaigns-cron': typeof ApiPublicHooksCampaignsCronRoute
   '/api/public/v1/sms': typeof ApiPublicV1SmsRoute
@@ -310,7 +343,9 @@ export interface FileRoutesById {
   '/~oauth/initiate': typeof Char126oauthInitiateRoute
   '/_authenticated/admin/campaigns': typeof AuthenticatedAdminCampaignsRoute
   '/_authenticated/admin/contacts': typeof AuthenticatedAdminContactsRoute
+  '/_authenticated/admin/hero': typeof AuthenticatedAdminHeroRoute
   '/_authenticated/admin/news': typeof AuthenticatedAdminNewsRoute
+  '/_authenticated/admin/news-categories': typeof AuthenticatedAdminNewsCategoriesRoute
   '/_authenticated/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/_authenticated/admin/packages': typeof AuthenticatedAdminPackagesRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -318,6 +353,8 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/campaigns': typeof AuthenticatedDashboardCampaignsRoute
   '/_authenticated/dashboard/orders': typeof AuthenticatedDashboardOrdersRoute
   '/_authenticated/dashboard/settings': typeof AuthenticatedDashboardSettingsRoute
+  '/actualites/categorie/$slug': typeof ActualitesCategorieSlugRoute
+  '/actualites/tag/$slug': typeof ActualitesTagSlugRoute
   '/_authenticated/dashboard/checkout/$slug': typeof AuthenticatedDashboardCheckoutSlugRoute
   '/api/public/hooks/campaigns-cron': typeof ApiPublicHooksCampaignsCronRoute
   '/api/public/v1/sms': typeof ApiPublicV1SmsRoute
@@ -346,7 +383,9 @@ export interface FileRouteTypes {
     | '/~oauth/initiate'
     | '/admin/campaigns'
     | '/admin/contacts'
+    | '/admin/hero'
     | '/admin/news'
+    | '/admin/news-categories'
     | '/admin/orders'
     | '/admin/packages'
     | '/admin/users'
@@ -354,6 +393,8 @@ export interface FileRouteTypes {
     | '/dashboard/campaigns'
     | '/dashboard/orders'
     | '/dashboard/settings'
+    | '/actualites/categorie/$slug'
+    | '/actualites/tag/$slug'
     | '/dashboard/checkout/$slug'
     | '/api/public/hooks/campaigns-cron'
     | '/api/public/v1/sms'
@@ -380,7 +421,9 @@ export interface FileRouteTypes {
     | '/~oauth/initiate'
     | '/admin/campaigns'
     | '/admin/contacts'
+    | '/admin/hero'
     | '/admin/news'
+    | '/admin/news-categories'
     | '/admin/orders'
     | '/admin/packages'
     | '/admin/users'
@@ -388,6 +431,8 @@ export interface FileRouteTypes {
     | '/dashboard/campaigns'
     | '/dashboard/orders'
     | '/dashboard/settings'
+    | '/actualites/categorie/$slug'
+    | '/actualites/tag/$slug'
     | '/dashboard/checkout/$slug'
     | '/api/public/hooks/campaigns-cron'
     | '/api/public/v1/sms'
@@ -415,7 +460,9 @@ export interface FileRouteTypes {
     | '/~oauth/initiate'
     | '/_authenticated/admin/campaigns'
     | '/_authenticated/admin/contacts'
+    | '/_authenticated/admin/hero'
     | '/_authenticated/admin/news'
+    | '/_authenticated/admin/news-categories'
     | '/_authenticated/admin/orders'
     | '/_authenticated/admin/packages'
     | '/_authenticated/admin/users'
@@ -423,6 +470,8 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/campaigns'
     | '/_authenticated/dashboard/orders'
     | '/_authenticated/dashboard/settings'
+    | '/actualites/categorie/$slug'
+    | '/actualites/tag/$slug'
     | '/_authenticated/dashboard/checkout/$slug'
     | '/api/public/hooks/campaigns-cron'
     | '/api/public/v1/sms'
@@ -573,6 +622,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/actualites/tag/$slug': {
+      id: '/actualites/tag/$slug'
+      path: '/tag/$slug'
+      fullPath: '/actualites/tag/$slug'
+      preLoaderRoute: typeof ActualitesTagSlugRouteImport
+      parentRoute: typeof ActualitesRoute
+    }
+    '/actualites/categorie/$slug': {
+      id: '/actualites/categorie/$slug'
+      path: '/categorie/$slug'
+      fullPath: '/actualites/categorie/$slug'
+      preLoaderRoute: typeof ActualitesCategorieSlugRouteImport
+      parentRoute: typeof ActualitesRoute
+    }
     '/_authenticated/dashboard/settings': {
       id: '/_authenticated/dashboard/settings'
       path: '/settings'
@@ -622,11 +685,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminOrdersRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/news-categories': {
+      id: '/_authenticated/admin/news-categories'
+      path: '/news-categories'
+      fullPath: '/admin/news-categories'
+      preLoaderRoute: typeof AuthenticatedAdminNewsCategoriesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/news': {
       id: '/_authenticated/admin/news'
       path: '/news'
       fullPath: '/admin/news'
       preLoaderRoute: typeof AuthenticatedAdminNewsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/hero': {
+      id: '/_authenticated/admin/hero'
+      path: '/hero'
+      fullPath: '/admin/hero'
+      preLoaderRoute: typeof AuthenticatedAdminHeroRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/contacts': {
@@ -691,7 +768,9 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminCampaignsRoute: typeof AuthenticatedAdminCampaignsRoute
   AuthenticatedAdminContactsRoute: typeof AuthenticatedAdminContactsRoute
+  AuthenticatedAdminHeroRoute: typeof AuthenticatedAdminHeroRoute
   AuthenticatedAdminNewsRoute: typeof AuthenticatedAdminNewsRoute
+  AuthenticatedAdminNewsCategoriesRoute: typeof AuthenticatedAdminNewsCategoriesRoute
   AuthenticatedAdminOrdersRoute: typeof AuthenticatedAdminOrdersRoute
   AuthenticatedAdminPackagesRoute: typeof AuthenticatedAdminPackagesRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
@@ -700,7 +779,9 @@ interface AuthenticatedAdminRouteChildren {
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminCampaignsRoute: AuthenticatedAdminCampaignsRoute,
   AuthenticatedAdminContactsRoute: AuthenticatedAdminContactsRoute,
+  AuthenticatedAdminHeroRoute: AuthenticatedAdminHeroRoute,
   AuthenticatedAdminNewsRoute: AuthenticatedAdminNewsRoute,
+  AuthenticatedAdminNewsCategoriesRoute: AuthenticatedAdminNewsCategoriesRoute,
   AuthenticatedAdminOrdersRoute: AuthenticatedAdminOrdersRoute,
   AuthenticatedAdminPackagesRoute: AuthenticatedAdminPackagesRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
@@ -747,10 +828,14 @@ const AuthenticatedRouteRouteWithChildren =
 
 interface ActualitesRouteChildren {
   ActualitesSlugRoute: typeof ActualitesSlugRoute
+  ActualitesCategorieSlugRoute: typeof ActualitesCategorieSlugRoute
+  ActualitesTagSlugRoute: typeof ActualitesTagSlugRoute
 }
 
 const ActualitesRouteChildren: ActualitesRouteChildren = {
   ActualitesSlugRoute: ActualitesSlugRoute,
+  ActualitesCategorieSlugRoute: ActualitesCategorieSlugRoute,
+  ActualitesTagSlugRoute: ActualitesTagSlugRoute,
 }
 
 const ActualitesRouteWithChildren = ActualitesRoute._addFileChildren(
