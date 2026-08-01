@@ -1,16 +1,14 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
-const eventSchema = z.object({
-  event_name: z.string().trim().min(1).max(100),
-  properties: z.record(z.string(), z.unknown()).optional(),
-  session_id: z.string().max(100).optional().nullable(),
-  page_url: z.string().max(500).optional().nullable(),
-  referrer: z.string().max(500).optional().nullable(),
-});
-
 export const trackEvent = createServerFn({ method: "POST" })
-  .inputValidator((raw: unknown) => eventSchema.parse(raw))
+  .validator((raw: unknown) => z.object({
+    event_name: z.string().trim().min(1).max(100),
+    properties: z.record(z.string(), z.unknown()).optional(),
+    session_id: z.string().max(100).optional().nullable(),
+    page_url: z.string().max(500).optional().nullable(),
+    referrer: z.string().max(500).optional().nullable(),
+  }).parse(raw))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin.from("analytics_events").insert({

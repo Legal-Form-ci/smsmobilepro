@@ -17,24 +17,26 @@ type Slide = {
   cta?: string;
   duration_ms?: number;
   pause_on_hover?: boolean;
+  kind?: string;
 };
 
 const DEFAULT_SLIDES: Slide[] = [
-  { key: "sms", src: heroSms, eyebrow: "SMS Marketing", title: "Vos promos livrées en 3 secondes", subtitle: "98,2% de délivrabilité sur les 8 pays UEMOA.", href: "/solutions", cta: "Découvrir" },
-  { key: "money", src: heroMoney, eyebrow: "Mobile Money", title: "Alertes de paiement instantanées", subtitle: "Orange Money, MTN MoMo, Wave, Moov.", href: "/solutions", cta: "Voir les cas d'usage" },
-  { key: "uemoa", src: heroUemoa, eyebrow: "Zone UEMOA", title: "8 pays. Une seule plateforme.", subtitle: "Côte d'Ivoire, Sénégal, Mali, Burkina, Bénin, Togo, Niger, Guinée-Bissau.", href: "/tarifs", cta: "Voir les tarifs" },
-  { key: "email", src: heroEmail, eyebrow: "Omnicanal", title: "SMS + Email + WhatsApp", subtitle: "Pilotez toutes vos campagnes depuis un seul dashboard.", href: "/solutions", cta: "Explorer" },
+  { key: "sms", kind: "sms", src: heroSms, eyebrow: "SMS Marketing", title: "Vos promos livrées en 3 secondes", subtitle: "98,2% de délivrabilité sur les 8 pays UEMOA.", href: "/solutions", cta: "Découvrir" },
+  { key: "money", kind: "money", src: heroMoney, eyebrow: "Mobile Money", title: "Alertes de paiement instantanées", subtitle: "Orange Money, MTN MoMo, Wave, Moov.", href: "/solutions", cta: "Voir les cas d'usage" },
+  { key: "uemoa", kind: "uemoa", src: heroUemoa, eyebrow: "Zone UEMOA", title: "8 pays. Une seule plateforme.", subtitle: "Côte d'Ivoire, Sénégal, Mali, Burkina, Bénin, Togo, Niger, Guinée-Bissau.", href: "/tarifs", cta: "Voir les tarifs" },
+  { key: "email", kind: "email", src: heroEmail, eyebrow: "Omnicanal", title: "SMS + Email + WhatsApp", subtitle: "Pilotez toutes vos campagnes depuis un seul dashboard.", href: "/solutions", cta: "Explorer" },
 ];
 
-export function HeroCarousel() {
+export function HeroCarousel({ context = "all" }: { context?: "all" | "sms" | "email" | "uemoa" }) {
   const { data: cmsSlides = [] } = useQuery({
-    queryKey: ["hero-slides"],
-    queryFn: () => listActiveHeroSlides(),
+    queryKey: ["hero-slides", context],
+    queryFn: () => listActiveHeroSlides({ data: { context } }),
     staleTime: 60_000,
   });
   const { data: news = [] } = useQuery({
-    queryKey: ["public-news-hero"],
+    queryKey: ["public-news-hero", context],
     queryFn: () => listPublishedNews({ data: { limit: 3 } }),
+    enabled: context === "all",
     staleTime: 60_000,
   });
 
@@ -49,21 +51,31 @@ export function HeroCarousel() {
       cta: s.cta || undefined,
       duration_ms: s.duration_ms,
       pause_on_hover: s.pause_on_hover,
+      kind: s.kind
     }));
-    const newsSlides: Slide[] = (news as any[]).slice(0, 3).map((n) => ({
-      key: `news-${n.id}`,
-      src: n.cover_image_url || heroSms,
-      eyebrow: "Actualité",
-      title: n.title,
-      subtitle: n.excerpt || undefined,
-      href: `/actualites/${n.slug}`,
-      cta: "Lire l'article",
-    }));
-    const merged = [...cms, ...newsSlides, ...DEFAULT_SLIDES];
+    
+    const newsSlides: Slide[] = context === "all"
+      ? (news as any[]).slice(0, 3).map((n) => ({
+          key: `news-${n.id}`,
+          src: n.cover_image_url || heroSms,
+          eyebrow: "Actualité",
+          title: n.title,
+          subtitle: n.excerpt || undefined,
+          href: `/actualites/${n.slug}`,
+          cta: "Lire l'article",
+          kind: "news"
+        }))
+      : [];
+
+    const filteredDefaults = context !== "all"
+      ? DEFAULT_SLIDES.filter((slide) => slide.kind === context)
+      : DEFAULT_SLIDES;
+
+    const merged = [...cms, ...newsSlides, ...filteredDefaults];
     // dedupe by key
     const seen = new Set<string>();
     return merged.filter((s) => (seen.has(s.key) ? false : (seen.add(s.key), true)));
-  }, [cmsSlides, news]);
+  }, [cmsSlides, context, news]);
 
   const [idx, setIdx] = useState(0);
   const [paused, setPaused] = useState(false);

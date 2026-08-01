@@ -12,15 +12,24 @@ export const Route = createFileRoute("/actualites/categorie/$slug")({
   },
   head: ({ loaderData, params }) => {
     const name = (loaderData as any)?.category?.name ?? params.slug;
+    const title = `Actualités — ${name} — SMS Pro Mobile`;
+    const desc = `Articles catégorie ${name} sur SMS Pro Mobile.`;
+    const url = `https://smsmobilepro.lovable.app/actualites/categorie/${params.slug}`;
     return {
       meta: [
-        { title: `Actualités — ${name} — SMS Pro Mobile` },
-        { name: "description", content: `Articles catégorie ${name} sur SMS Pro Mobile.` },
-        { property: "og:title", content: `Actualités — ${name}` },
-        { property: "og:description", content: `Articles catégorie ${name}.` },
+        { title },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        { property: "og:url", content: url },
         { property: "og:type", content: "website" },
+        { property: "og:url", content: `https://smsmobilepro.lovable.app/actualites/categorie/${params.slug}` },
+        { name: "twitter:card", content: "summary" },
+        { name: "twitter:title", content: `Actualités — ${name}` },
+        { name: "twitter:description", content: `Articles catégorie ${name} sur SMS Pro Mobile.` },
+        { name: "twitter:card", content: "summary" },
       ],
-      links: [{ rel: "canonical", href: `/actualites/categorie/${params.slug}` }],
+      links: [{ rel: "canonical", href: url }],
     };
   },
 });

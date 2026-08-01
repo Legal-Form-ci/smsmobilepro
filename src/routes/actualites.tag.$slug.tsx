@@ -5,16 +5,27 @@ import { listPublishedNews } from "@/lib/news.functions";
 export const Route = createFileRoute("/actualites/tag/$slug")({
   component: NewsByTag,
   loader: async ({ params }) => ({ items: await listPublishedNews({ data: { tag: params.slug } }), tag: params.slug }),
-  head: ({ params }) => ({
-    meta: [
-      { title: `Actualités — #${params.slug} — SMS Pro Mobile` },
-      { name: "description", content: `Articles avec le tag #${params.slug}.` },
-      { property: "og:title", content: `Actualités — #${params.slug}` },
-      { property: "og:description", content: `Articles avec le tag #${params.slug}.` },
-      { property: "og:type", content: "website" },
-    ],
-    links: [{ rel: "canonical", href: `/actualites/tag/${params.slug}` }],
-  }),
+  head: ({ params }) => {
+    const title = `Actualités — #${params.slug} — SMS Pro Mobile`;
+    const desc = `Articles avec le tag #${params.slug}.`;
+    const url = `https://smsmobilepro.lovable.app/actualites/tag/${params.slug}`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        { property: "og:url", content: url },
+        { property: "og:type", content: "website" },
+      { property: "og:url", content: `https://smsmobilepro.lovable.app/actualites/tag/${params.slug}` },
+      { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: `Actualités — #${params.slug}` },
+      { name: "twitter:description", content: `Articles avec le tag #${params.slug}.` },
+        { name: "twitter:card", content: "summary" },
+      ],
+      links: [{ rel: "canonical", href: url }],
+    };
+  },
 });
 
 function NewsByTag() {

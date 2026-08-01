@@ -17,7 +17,7 @@ export const listCampaigns = createServerFn({ method: "GET" })
 
 export const getCampaign = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { id: string }) => d)
+  .validator((d: { id: string }) => d)
   .handler(async ({ data, context }) => {
     const { data: camp, error } = await context.supabase
       .from("campaigns").select("*").eq("id", data.id).single();
@@ -27,7 +27,7 @@ export const getCampaign = createServerFn({ method: "GET" })
 
 export const listExecutions = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { campaign_id?: string } = {}) => d)
+  .validator((d: { campaign_id?: string } = {}) => d)
   .handler(async ({ data, context }) => {
     let q = context.supabase
       .from("campaign_executions")
@@ -42,30 +42,21 @@ export const listExecutions = createServerFn({ method: "GET" })
 
 /* --------- CREATE / UPDATE --------- */
 
-const upsertSchema = z.object({
-  id: z.string().uuid().optional(),
-  name: z.string().min(1).max(200),
-  sender_id: z.string().min(1).max(11),
-  message: z.string().min(1).max(1000),
-  recipients: z.array(z.string().min(6).max(20)).min(1).max(100000),
-  scheduled_at: z.string().optional().nullable(),
-  recurrence: z.enum(["daily", "weekly", "monthly"]).optional().nullable(),
-  recurrence_end: z.string().optional().nullable(),
-  save_as_draft: z.boolean().optional(),
-});
-
-function computeStatus(scheduled_at: string | null | undefined, recurrence: string | null | undefined, save_as_draft?: boolean) {
-  if (save_as_draft) return "draft";
-  if (recurrence) return "recurring";
-  if (scheduled_at) return "scheduled";
-  return "draft";
-}
-
 export const upsertCampaign = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d) => upsertSchema.parse(d))
+  .validator((d) => z.object({
+    id: z.string().uuid().optional(),
+    name: z.string().min(1).max(200),
+    sender_id: z.string().min(1).max(11),
+    message: z.string().min(1).max(1000),
+    recipients: z.array(z.string().min(6).max(20)).min(1).max(100000),
+    scheduled_at: z.string().optional().nullable(),
+    recurrence: z.enum(["daily", "weekly", "monthly"]).optional().nullable(),
+    recurrence_end: z.string().optional().nullable(),
+    save_as_draft: z.boolean().optional(),
+  }).parse(d))
   .handler(async ({ data, context }) => {
-    const status = computeStatus(data.scheduled_at, data.recurrence, data.save_as_draft);
+    const status = data.save_as_draft ? "draft" : data.recurrence ? "recurring" : data.scheduled_at ? "scheduled" : "draft";
     const next_run_at = data.scheduled_at ?? null;
 
     const payload = {
@@ -106,7 +97,7 @@ export const createCampaign = upsertCampaign;
 
 export const deleteCampaign = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { id: string }) => d)
+  .validator((d: { id: string }) => d)
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase
       .from("campaigns").delete().eq("id", data.id).eq("user_id", context.userId);
@@ -116,7 +107,7 @@ export const deleteCampaign = createServerFn({ method: "POST" })
 
 export const duplicateCampaign = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { id: string }) => d)
+  .validator((d: { id: string }) => d)
   .handler(async ({ data, context }) => {
     const { data: src, error } = await context.supabase
       .from("campaigns").select("*").eq("id", data.id).single();
@@ -140,7 +131,7 @@ export const duplicateCampaign = createServerFn({ method: "POST" })
 
 export const sendCampaign = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { id: string }) => d)
+  .validator((d: { id: string }) => d)
   .handler(async ({ data, context }) => {
     const { data: camp, error } = await context.supabase
       .from("campaigns").select("*").eq("id", data.id).eq("user_id", context.userId).single();

@@ -12,22 +12,31 @@ export const Route = createFileRoute("/actualites/$slug")({
   head: ({ loaderData }) => {
     const p = loaderData as any;
     if (!p) return { meta: [{ title: "Actualité" }] };
+    const title = `${p.title} — SMS Pro Mobile`;
+    const desc = p.excerpt ?? p.title;
+    const url = `https://smsmobilepro.lovable.app/actualites/${p.slug}`;
     return {
       meta: [
-        { title: `${p.title} — SMS Pro Mobile` },
-        { name: "description", content: p.excerpt ?? p.title },
+        { title },
+        { name: "description", content: desc },
         { property: "og:title", content: p.title },
-        { property: "og:description", content: p.excerpt ?? "" },
+        { property: "og:description", content: desc },
+        { property: "og:url", content: url },
         { property: "og:type", content: "article" },
+        { property: "og:url", content: `https://smsmobilepro.lovable.app/actualites/${p.slug}` },
+        { name: "twitter:card", content: p.cover_image_url ? "summary_large_image" : "summary" },
+        { name: "twitter:title", content: p.title },
+        { name: "twitter:description", content: p.excerpt ?? p.title },
+        { name: "twitter:title", content: p.title },
+        { name: "twitter:description", content: desc },
         ...(p.cover_image_url
           ? [
               { property: "og:image", content: p.cover_image_url },
               { name: "twitter:image", content: p.cover_image_url },
-              { name: "twitter:card", content: "summary_large_image" },
             ]
           : []),
       ],
-      links: [{ rel: "canonical", href: `/actualites/${p.slug}` }],
+      links: [{ rel: "canonical", href: url }],
     };
   },
 });
