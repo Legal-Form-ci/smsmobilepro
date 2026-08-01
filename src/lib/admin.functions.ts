@@ -1,21 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
-
-async function assertAdmin(context: { supabase: any; userId: string }) {
-  const { data } = await context.supabase
-    .from("user_roles")
-    .select("role")
-    .eq("user_id", context.userId)
-    .eq("role", "admin")
-    .maybeSingle();
-  if (!data) throw new Error("Forbidden");
-}
+import { assertAdminRole } from "./server-function-helpers";
 
 export const listAdminOverview = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin(context);
+    await assertAdminRole(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     const [{ count: usersCount }, { count: campaignsCount }, paid, recentOrders, recentCampaigns] = await Promise.all([
@@ -41,7 +32,7 @@ export const listAdminOverview = createServerFn({ method: "GET" })
 export const listUsers = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin(context);
+    await assertAdminRole(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: profiles } = await supabaseAdmin
       .from("profiles")
@@ -54,7 +45,7 @@ export const updateUser = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { id: string; sms_credits?: number; full_name?: string; company?: string; phone?: string }) => d)
   .handler(async ({ data, context }) => {
-    await assertAdmin(context);
+    await assertAdminRole(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { id, ...patch } = data;
     const { error } = await supabaseAdmin.from("profiles").update(patch).eq("id", id);
@@ -66,7 +57,7 @@ export const setUserRole = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { user_id: string; role: "admin" | "client"; grant: boolean }) => d)
   .handler(async ({ data, context }) => {
-    await assertAdmin(context);
+    await assertAdminRole(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     if (data.grant) {
       await supabaseAdmin.from("user_roles").upsert({ user_id: data.user_id, role: data.role }, { onConflict: "user_id,role" });
@@ -80,7 +71,7 @@ export const deleteUser = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { id: string }) => d)
   .handler(async ({ data, context }) => {
-    await assertAdmin(context);
+    await assertAdminRole(context);
     if (data.id === context.userId) throw new Error("Impossible de supprimer votre propre compte");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin.auth.admin.deleteUser(data.id);
@@ -100,7 +91,7 @@ export const createUser = createServerFn({ method: "POST" })
     }).parse(d)
   )
   .handler(async ({ data, context }) => {
-    await assertAdmin(context);
+    await assertAdminRole(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: created, error } = await supabaseAdmin.auth.admin.createUser({
       email: data.email,
@@ -122,7 +113,7 @@ export const createUser = createServerFn({ method: "POST" })
 export const listPackagesAdmin = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin(context);
+    await assertAdminRole(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data } = await supabaseAdmin.from("packages").select("*").order("price_fcfa");
     return data ?? [];
@@ -135,7 +126,7 @@ export const upsertPackage = createServerFn({ method: "POST" })
     features: string[]; is_active?: boolean; featured?: boolean;
   }) => d)
   .handler(async ({ data, context }) => {
-    await assertAdmin(context);
+    await assertAdminRole(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const row: any = {
       slug: data.slug, name: data.name, price_fcfa: data.price_fcfa,
@@ -152,7 +143,7 @@ export const deletePackage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { id: string }) => d)
   .handler(async ({ data, context }) => {
-    await assertAdmin(context);
+    await assertAdminRole(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin.from("packages").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
@@ -163,7 +154,7 @@ export const deletePackage = createServerFn({ method: "POST" })
 export const listOrdersAdmin = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin(context);
+    await assertAdminRole(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data } = await supabaseAdmin.from("orders").select("*, profiles!inner(email, full_name), packages(name)").order("created_at", { ascending: false });
     return data ?? [];
@@ -173,7 +164,7 @@ export const updateOrderStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { id: string; status: "pending" | "paid" | "failed" | "cancelled" }) => d)
   .handler(async ({ data, context }) => {
-    await assertAdmin(context);
+    await assertAdminRole(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: order, error } = await supabaseAdmin.from("orders").update({ status: data.status }).eq("id", data.id).select("user_id, sms_volume, status").maybeSingle();
     if (error) throw new Error(error.message);
@@ -188,7 +179,7 @@ export const updateOrderStatus = createServerFn({ method: "POST" })
 export const listCampaignsAdmin = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin(context);
+    await assertAdminRole(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data } = await supabaseAdmin.from("campaigns").select("*, profiles!inner(email)").order("created_at", { ascending: false });
     return data ?? [];
@@ -198,7 +189,7 @@ export const deleteCampaign = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { id: string }) => d)
   .handler(async ({ data, context }) => {
-    await assertAdmin(context);
+    await assertAdminRole(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin.from("campaigns").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
@@ -209,7 +200,7 @@ export const deleteCampaign = createServerFn({ method: "POST" })
 export const listContacts = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin(context);
+    await assertAdminRole(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data } = await supabaseAdmin.from("contact_submissions").select("*").order("created_at", { ascending: false });
     return data ?? [];

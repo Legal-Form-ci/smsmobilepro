@@ -9,16 +9,23 @@ export const Route = createFileRoute("/actualites")({
     items: await listPublishedNews({ data: {} }),
     categories: await listCategories(),
   }),
-  head: () => ({
-    meta: [
-      { title: "Actualités — SMS Pro Mobile" },
-      { name: "description", content: "Toutes les actualités SMS Pro Mobile : nouveautés produit, retours clients et tendances du marketing SMS en Afrique de l'Ouest." },
-      { property: "og:title", content: "Actualités — SMS Pro Mobile" },
-      { property: "og:description", content: "Nouveautés, cas clients et tendances marketing SMS UEMOA." },
-      { property: "og:type", content: "website" },
-    ],
-    links: [{ rel: "canonical", href: "/actualites" }],
-  }),
+  head: () => {
+    const title = "Actualités — SMS Pro Mobile";
+    const desc = "Toutes les actualités SMS Pro Mobile : nouveautés produit, retours clients et tendances du marketing SMS en Afrique de l'Ouest.";
+    const url = "https://smsmobilepro.lovable.app/actualites";
+    return {
+      meta: [
+        { title },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        { property: "og:url", content: url },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary" },
+      ],
+      links: [{ rel: "canonical", href: url }],
+    };
+  },
 });
 
 function NewsIndex() {
