@@ -13,14 +13,12 @@ export const listOrders = createServerFn({ method: "GET" })
     return data ?? [];
   });
 
-const initiateSchema = z.object({
-  package_slug: z.string().min(1),
-  provider: z.enum(["cinetpay", "fedapay"]),
-});
-
 export const initiatePayment = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d) => initiateSchema.parse(d))
+  .validator((d) => z.object({
+    package_slug: z.string().min(1),
+    provider: z.enum(["cinetpay", "fedapay"]),
+  }).parse(d))
   .handler(async ({ data, context }) => {
     const { data: pkg, error: pkgErr } = await context.supabase
       .from("packages").select("*").eq("slug", data.package_slug).eq("active", true).maybeSingle();

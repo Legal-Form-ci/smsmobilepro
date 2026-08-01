@@ -73,7 +73,7 @@ export const upsertNews = createServerFn({ method: "POST" })
 
 export const deleteNews = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { id: string }) => d)
+  .validator((d: { id: string }) => d)
   .handler(async ({ data, context }) => {
     await assertAdminRole(context);
     const { error } = await context.supabase.from("news_posts").delete().eq("id", data.id);
@@ -126,7 +126,7 @@ export const upsertCategory = createServerFn({ method: "POST" })
 
 export const deleteCategory = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { id: string }) => d)
+  .validator((d: { id: string }) => d)
   .handler(async ({ data, context }) => {
     await assertAdminRole(context);
     const { error } = await context.supabase.from("news_categories").delete().eq("id", data.id);

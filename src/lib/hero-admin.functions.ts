@@ -54,7 +54,7 @@ export const upsertHeroSlide = createServerFn({ method: "POST" })
 
 export const deleteHeroSlide = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { id: string }) => d)
+  .validator((d: { id: string }) => d)
   .handler(async ({ data, context }) => {
     await assertAdminRole(context);
     const { error } = await context.supabase.from("hero_slides").delete().eq("id", data.id);
@@ -64,7 +64,7 @@ export const deleteHeroSlide = createServerFn({ method: "POST" })
 
 export const reorderHeroSlides = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { order: { id: string; position: number }[] }) => d)
+  .validator((d: { order: { id: string; position: number }[] }) => d)
   .handler(async ({ data, context }) => {
     await assertAdminRole(context);
     for (const { id, position } of data.order) {

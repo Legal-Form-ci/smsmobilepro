@@ -7,7 +7,7 @@ import { z } from "zod";
  */
 export const recordConsent = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { marketing?: boolean }) => d)
+  .validator((d: { marketing?: boolean }) => d)
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase
       .from("profiles")
@@ -26,11 +26,9 @@ export const recordConsent = createServerFn({ method: "POST" })
  *   - profiles, campaigns, sms_messages, orders, api_keys, campaign_executions, user_roles
  *     all reference auth.users(id) with ON DELETE CASCADE (or are cleaned up here).
  */
-const delSchema = z.object({ confirm: z.literal("SUPPRIMER") });
-
 export const deleteMyAccount = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d) => delSchema.parse(d))
+  .validator((d) => z.object({ confirm: z.literal("SUPPRIMER") }).parse(d))
   .handler(async ({ context }) => {
     const userId = context.userId;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

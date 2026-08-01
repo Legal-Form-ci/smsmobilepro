@@ -9,6 +9,7 @@ export async function getNewsSitemapEntries(): Promise<DynamicSitemapEntry[]> {
       .from("news_posts")
       .select("slug, updated_at, tags")
       .eq("status", "published")
+      .lte("published_at", new Date().toISOString())
       .order("updated_at", { ascending: false }),
     client.from("news_categories").select("slug, updated_at").order("slug"),
   ]);
