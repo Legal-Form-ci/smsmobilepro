@@ -27,7 +27,7 @@ export const Route = createFileRoute("/sitemap.xml")({
 
         try {
           const dynamicEntries = await getNewsSitemapEntries();
-          entries.push(...dynamicEntries.map((entry) => ({
+          entries.push(...dynamicEntries.filter((entry) => entry.path !== "/actualites").map((entry) => ({
             ...entry,
             changefreq: entry.path === "/actualites" ? "daily" as const : "weekly" as const,
             priority: entry.path === "/actualites" ? "0.9" : "0.6",
