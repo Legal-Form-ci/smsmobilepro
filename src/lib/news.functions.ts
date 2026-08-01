@@ -26,6 +26,7 @@ export const listPublishedNews = createServerFn({ method: "GET" })
       .from("news_posts")
       .select("id, title, slug, excerpt, cover_image_url, published_at, tags, category_id, news_categories(name,slug)")
       .eq("status", "published")
+      .lte("published_at", new Date().toISOString())
       .order("published_at", { ascending: false })
       .limit(data.limit ?? 30);
     if (data.category) q = q.eq("news_categories.slug", data.category);
@@ -45,6 +46,7 @@ export const getNewsBySlug = createServerFn({ method: "GET" })
       .select("*, news_categories(name,slug)")
       .eq("slug", data.slug)
       .eq("status", "published")
+      .lte("published_at", new Date().toISOString())
       .maybeSingle();
     return row;
   });
@@ -55,12 +57,15 @@ export const listCategories = createServerFn({ method: "GET" }).handler(async ()
   return data ?? [];
 });
 
-export const listActiveHeroSlides = createServerFn({ method: "GET" }).handler(async () => {
-  const sb = publicClient();
-  const { data } = await sb
-    .from("hero_slides")
-    .select("*")
-    .eq("is_active", true)
-    .order("position", { ascending: true });
-  return data ?? [];
-});
+export const listActiveHeroSlides = createServerFn({ method: "GET" })
+  .inputValidator((d: { kind?: string } | undefined) => d ?? {})
+  .handler(async ({ data }) => {
+    const sb = publicClient();
+    let q = sb
+      .from("hero_slides")
+      .select("*")
+      .eq("is_active", true);
+    if (data.kind) q = q.eq("kind", data.kind);
+    const { data: slides, error } = await q.order("position", { ascending: true });
+    return slides ?? [];
+  });
