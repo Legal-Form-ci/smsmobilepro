@@ -15,24 +15,22 @@ export const listHeroSlides = createServerFn({ method: "GET" })
     return data ?? [];
   });
 
-const slideSchema = z.object({
-  id: z.string().uuid().optional(),
-  media_url: z.string().url(),
-  eyebrow: z.string().max(80).default(""),
-  title: z.string().min(2).max(200),
-  subtitle: z.string().max(400).optional().nullable(),
-  href: z.string().max(300).optional().nullable(),
-  cta: z.string().max(60).optional().nullable(),
-  kind: z.enum(["sms", "email", "uemoa", "news", "money", "other"]).default("other"),
-  position: z.number().int().min(0).max(9999).default(0),
-  duration_ms: z.number().int().min(1500).max(30000).default(5000),
-  pause_on_hover: z.boolean().default(true),
-  is_active: z.boolean().default(true),
-});
-
 export const upsertHeroSlide = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => slideSchema.parse(d))
+  .validator((d: unknown) => z.object({
+    id: z.string().uuid().optional(),
+    media_url: z.string().url(),
+    eyebrow: z.string().max(80).default(""),
+    title: z.string().min(2).max(200),
+    subtitle: z.string().max(400).optional().nullable(),
+    href: z.string().max(300).optional().nullable(),
+    cta: z.string().max(60).optional().nullable(),
+    kind: z.enum(["sms", "email", "uemoa", "news", "money", "other"]).default("other"),
+    position: z.number().int().min(0).max(9999).default(0),
+    duration_ms: z.number().int().min(1500).max(30000).default(5000),
+    pause_on_hover: z.boolean().default(true),
+    is_active: z.boolean().default(true),
+  }).parse(d))
   .handler(async ({ data, context }) => {
     await assertAdminRole(context);
     if (data.id) {

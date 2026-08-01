@@ -27,16 +27,16 @@ const DEFAULT_SLIDES: Slide[] = [
   { key: "email", kind: "email", src: heroEmail, eyebrow: "Omnicanal", title: "SMS + Email + WhatsApp", subtitle: "Pilotez toutes vos campagnes depuis un seul dashboard.", href: "/solutions", cta: "Explorer" },
 ];
 
-export function HeroCarousel({ kind }: { kind?: string }) {
+export function HeroCarousel({ context = "all" }: { context?: "all" | "sms" | "email" | "uemoa" }) {
   const { data: cmsSlides = [] } = useQuery({
-    queryKey: ["hero-slides", kind],
-    queryFn: () => listActiveHeroSlides({ data: { kind } }),
+    queryKey: ["hero-slides", context],
+    queryFn: () => listActiveHeroSlides({ data: { context } }),
     staleTime: 60_000,
   });
   const { data: news = [] } = useQuery({
-    queryKey: ["public-news-hero", kind],
+    queryKey: ["public-news-hero", context],
     queryFn: () => listPublishedNews({ data: { limit: 3 } }),
-    enabled: !kind || kind === "news",
+    enabled: context === "all",
     staleTime: 60_000,
   });
 
@@ -54,7 +54,7 @@ export function HeroCarousel({ kind }: { kind?: string }) {
       kind: s.kind
     }));
     
-    const newsSlides: Slide[] = (!kind || kind === "news") 
+    const newsSlides: Slide[] = context === "all"
       ? (news as any[]).slice(0, 3).map((n) => ({
           key: `news-${n.id}`,
           src: n.cover_image_url || heroSms,
@@ -67,15 +67,15 @@ export function HeroCarousel({ kind }: { kind?: string }) {
         }))
       : [];
 
-    const filteredDefaults = kind 
-      ? DEFAULT_SLIDES.filter(s => s.kind === kind)
+    const filteredDefaults = context !== "all"
+      ? DEFAULT_SLIDES.filter((slide) => slide.kind === context)
       : DEFAULT_SLIDES;
 
     const merged = [...cms, ...newsSlides, ...filteredDefaults];
     // dedupe by key
     const seen = new Set<string>();
     return merged.filter((s) => (seen.has(s.key) ? false : (seen.add(s.key), true)));
-  }, [cmsSlides, news, kind]);
+  }, [cmsSlides, context, news]);
 
   const [idx, setIdx] = useState(0);
   const [paused, setPaused] = useState(false);

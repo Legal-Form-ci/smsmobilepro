@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { createClient } from "@supabase/supabase-js";
-import type { Database } from "@/integrations/supabase/types";
+import { getNewsSitemapEntries } from "@/lib/sitemap.server";
 
 const BASE_URL = "https://smsmobilepro.lovable.app";
 
 interface SitemapEntry {
   path: string;
+  lastmod?: string;
   changefreq?: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
   priority?: string;
 }
@@ -14,10 +14,6 @@ export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
       GET: async () => {
-        const url = process.env.SUPABASE_URL!;
-        const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_PUBLISHABLE_KEY!;
-        const sb = createClient<Database>(url, key);
-
         const entries: SitemapEntry[] = [
           { path: "/", changefreq: "weekly", priority: "1.0" },
           { path: "/solutions", changefreq: "monthly", priority: "0.8" },
@@ -29,45 +25,22 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/conditions", changefreq: "yearly", priority: "0.3" },
         ];
 
-        // Fetch Dynamic News
-        const { data: posts } = await sb
-          .from("news_posts")
-          .select("slug")
-          .eq("status", "published")
-          .lte("published_at", new Date().toISOString());
-        
-        if (posts) {
-          posts.forEach(p => entries.push({ 
-            path: `/actualites/${p.slug}`, 
-            changefreq: "monthly", 
-            priority: "0.7" 
-          }));
+        try {
+          const dynamicEntries = await getNewsSitemapEntries();
+          entries.push(...dynamicEntries.map((entry) => ({
+            ...entry,
+            changefreq: entry.path === "/actualites" ? "daily" as const : "weekly" as const,
+            priority: entry.path === "/actualites" ? "0.9" : "0.6",
+          })));
+        } catch (error) {
+          console.error("Unable to append news sitemap entries", error);
         }
-
-        // Fetch Categories
-        const { data: cats } = await sb.from("news_categories").select("slug");
-        if (cats) {
-          cats.forEach(c => entries.push({ 
-            path: `/actualites/categorie/${c.slug}`, 
-            changefreq: "weekly", 
-            priority: "0.6" 
-          }));
-        }
-
-        // Unique Tags
-        const { data: tagsData } = await sb.from("news_posts").select("tags").eq("status", "published");
-        const tags = new Set<string>();
-        tagsData?.forEach(r => r.tags?.forEach(t => tags.add(t)));
-        tags.forEach(t => entries.push({ 
-          path: `/actualites/tag/${t}`, 
-          changefreq: "weekly", 
-          priority: "0.5" 
-        }));
 
         const urls = entries.map((e) =>
           [
             `  <url>`,
             `    <loc>${BASE_URL}${e.path}</loc>`,
+            e.lastmod ? `    <lastmod>${e.lastmod}</lastmod>` : null,
             e.changefreq ? `    <changefreq>${e.changefreq}</changefreq>` : null,
             e.priority ? `    <priority>${e.priority}</priority>` : null,
             `  </url>`,

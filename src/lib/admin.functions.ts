@@ -210,7 +210,7 @@ export const updateContactStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { id: string; status: string }) => d)
   .handler(async ({ data, context }) => {
-    await assertAdmin(context);
+    await assertAdminRole(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin.from("contact_submissions").update({ status: data.status }).eq("id", data.id);
     if (error) throw new Error(error.message);
@@ -221,7 +221,7 @@ export const deleteContact = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { id: string }) => d)
   .handler(async ({ data, context }) => {
-    await assertAdmin(context);
+    await assertAdminRole(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin.from("contact_submissions").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
