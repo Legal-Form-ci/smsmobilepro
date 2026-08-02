@@ -24,8 +24,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as Char126oauthInitiateRouteImport } from './routes/~oauth.initiate'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as ActualitesSlugRouteImport } from './routes/actualites.$slug'
-import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
-import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard.index'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as ActualitesTagSlugRouteImport } from './routes/actualites.tag.$slug'
 import { Route as ActualitesCategorieSlugRouteImport } from './routes/actualites.categorie.$slug'
 import { Route as AuthenticatedDashboardSettingsRouteImport } from './routes/_authenticated/dashboard.settings'
@@ -121,14 +121,15 @@ const ActualitesSlugRoute = ActualitesSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => ActualitesRoute,
 } as any)
-const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
+const AuthenticatedDashboardIndexRoute =
+  AuthenticatedDashboardIndexRouteImport.update({
+    id: '/dashboard/',
+    path: '/dashboard/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const ActualitesTagSlugRoute = ActualitesTagSlugRouteImport.update({
@@ -143,72 +144,72 @@ const ActualitesCategorieSlugRoute = ActualitesCategorieSlugRouteImport.update({
 } as any)
 const AuthenticatedDashboardSettingsRoute =
   AuthenticatedDashboardSettingsRouteImport.update({
-    id: '/settings',
-    path: '/settings',
-    getParentRoute: () => AuthenticatedDashboardRoute,
+    id: '/dashboard/settings',
+    path: '/dashboard/settings',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedDashboardOrdersRoute =
   AuthenticatedDashboardOrdersRouteImport.update({
-    id: '/orders',
-    path: '/orders',
-    getParentRoute: () => AuthenticatedDashboardRoute,
+    id: '/dashboard/orders',
+    path: '/dashboard/orders',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedDashboardCampaignsRoute =
   AuthenticatedDashboardCampaignsRouteImport.update({
-    id: '/campaigns',
-    path: '/campaigns',
-    getParentRoute: () => AuthenticatedDashboardRoute,
+    id: '/dashboard/campaigns',
+    path: '/dashboard/campaigns',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedDashboardApiKeysRoute =
   AuthenticatedDashboardApiKeysRouteImport.update({
-    id: '/api-keys',
-    path: '/api-keys',
-    getParentRoute: () => AuthenticatedDashboardRoute,
+    id: '/dashboard/api-keys',
+    path: '/dashboard/api-keys',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
-  id: '/users',
-  path: '/users',
-  getParentRoute: () => AuthenticatedAdminRoute,
+  id: '/admin/users',
+  path: '/admin/users',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAdminPackagesRoute =
   AuthenticatedAdminPackagesRouteImport.update({
-    id: '/packages',
-    path: '/packages',
-    getParentRoute: () => AuthenticatedAdminRoute,
+    id: '/admin/packages',
+    path: '/admin/packages',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAdminOrdersRoute =
   AuthenticatedAdminOrdersRouteImport.update({
-    id: '/orders',
-    path: '/orders',
-    getParentRoute: () => AuthenticatedAdminRoute,
+    id: '/admin/orders',
+    path: '/admin/orders',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAdminNewsCategoriesRoute =
   AuthenticatedAdminNewsCategoriesRouteImport.update({
-    id: '/news-categories',
-    path: '/news-categories',
-    getParentRoute: () => AuthenticatedAdminRoute,
+    id: '/admin/news-categories',
+    path: '/admin/news-categories',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAdminNewsRoute = AuthenticatedAdminNewsRouteImport.update({
-  id: '/news',
-  path: '/news',
-  getParentRoute: () => AuthenticatedAdminRoute,
+  id: '/admin/news',
+  path: '/admin/news',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAdminHeroRoute = AuthenticatedAdminHeroRouteImport.update({
-  id: '/hero',
-  path: '/hero',
-  getParentRoute: () => AuthenticatedAdminRoute,
+  id: '/admin/hero',
+  path: '/admin/hero',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAdminContactsRoute =
   AuthenticatedAdminContactsRouteImport.update({
-    id: '/contacts',
-    path: '/contacts',
-    getParentRoute: () => AuthenticatedAdminRoute,
+    id: '/admin/contacts',
+    path: '/admin/contacts',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAdminCampaignsRoute =
   AuthenticatedAdminCampaignsRouteImport.update({
-    id: '/campaigns',
-    path: '/campaigns',
-    getParentRoute: () => AuthenticatedAdminRoute,
+    id: '/admin/campaigns',
+    path: '/admin/campaigns',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const ApiPublicWebhooksNmgroupeRoute =
   ApiPublicWebhooksNmgroupeRouteImport.update({
@@ -241,9 +242,9 @@ const ApiPublicHooksCampaignsCronRoute =
   } as any)
 const AuthenticatedDashboardCheckoutSlugRoute =
   AuthenticatedDashboardCheckoutSlugRouteImport.update({
-    id: '/checkout/$slug',
-    path: '/checkout/$slug',
-    getParentRoute: () => AuthenticatedDashboardRoute,
+    id: '/dashboard/checkout/$slug',
+    path: '/dashboard/checkout/$slug',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -258,8 +259,6 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solutions': typeof SolutionsRoute
   '/tarifs': typeof TarifsRoute
-  '/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/actualites/$slug': typeof ActualitesSlugRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/~oauth/initiate': typeof Char126oauthInitiateRoute
@@ -277,6 +276,8 @@ export interface FileRoutesByFullPath {
   '/dashboard/settings': typeof AuthenticatedDashboardSettingsRoute
   '/actualites/categorie/$slug': typeof ActualitesCategorieSlugRoute
   '/actualites/tag/$slug': typeof ActualitesTagSlugRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/dashboard/checkout/$slug': typeof AuthenticatedDashboardCheckoutSlugRoute
   '/api/public/hooks/campaigns-cron': typeof ApiPublicHooksCampaignsCronRoute
   '/api/public/v1/sms': typeof ApiPublicV1SmsRoute
@@ -296,8 +297,6 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solutions': typeof SolutionsRoute
   '/tarifs': typeof TarifsRoute
-  '/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/actualites/$slug': typeof ActualitesSlugRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/~oauth/initiate': typeof Char126oauthInitiateRoute
@@ -315,6 +314,8 @@ export interface FileRoutesByTo {
   '/dashboard/settings': typeof AuthenticatedDashboardSettingsRoute
   '/actualites/categorie/$slug': typeof ActualitesCategorieSlugRoute
   '/actualites/tag/$slug': typeof ActualitesTagSlugRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
+  '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/dashboard/checkout/$slug': typeof AuthenticatedDashboardCheckoutSlugRoute
   '/api/public/hooks/campaigns-cron': typeof ApiPublicHooksCampaignsCronRoute
   '/api/public/v1/sms': typeof ApiPublicV1SmsRoute
@@ -336,8 +337,6 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solutions': typeof SolutionsRoute
   '/tarifs': typeof TarifsRoute
-  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/actualites/$slug': typeof ActualitesSlugRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/~oauth/initiate': typeof Char126oauthInitiateRoute
@@ -355,6 +354,8 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/settings': typeof AuthenticatedDashboardSettingsRoute
   '/actualites/categorie/$slug': typeof ActualitesCategorieSlugRoute
   '/actualites/tag/$slug': typeof ActualitesTagSlugRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/_authenticated/dashboard/checkout/$slug': typeof AuthenticatedDashboardCheckoutSlugRoute
   '/api/public/hooks/campaigns-cron': typeof ApiPublicHooksCampaignsCronRoute
   '/api/public/v1/sms': typeof ApiPublicV1SmsRoute
@@ -376,8 +377,6 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/solutions'
     | '/tarifs'
-    | '/admin'
-    | '/dashboard'
     | '/actualites/$slug'
     | '/auth/callback'
     | '/~oauth/initiate'
@@ -395,6 +394,8 @@ export interface FileRouteTypes {
     | '/dashboard/settings'
     | '/actualites/categorie/$slug'
     | '/actualites/tag/$slug'
+    | '/admin/'
+    | '/dashboard/'
     | '/dashboard/checkout/$slug'
     | '/api/public/hooks/campaigns-cron'
     | '/api/public/v1/sms'
@@ -414,8 +415,6 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/solutions'
     | '/tarifs'
-    | '/admin'
-    | '/dashboard'
     | '/actualites/$slug'
     | '/auth/callback'
     | '/~oauth/initiate'
@@ -433,6 +432,8 @@ export interface FileRouteTypes {
     | '/dashboard/settings'
     | '/actualites/categorie/$slug'
     | '/actualites/tag/$slug'
+    | '/admin'
+    | '/dashboard'
     | '/dashboard/checkout/$slug'
     | '/api/public/hooks/campaigns-cron'
     | '/api/public/v1/sms'
@@ -453,8 +454,6 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/solutions'
     | '/tarifs'
-    | '/_authenticated/admin'
-    | '/_authenticated/dashboard'
     | '/actualites/$slug'
     | '/auth/callback'
     | '/~oauth/initiate'
@@ -472,6 +471,8 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/settings'
     | '/actualites/categorie/$slug'
     | '/actualites/tag/$slug'
+    | '/_authenticated/admin/'
+    | '/_authenticated/dashboard/'
     | '/_authenticated/dashboard/checkout/$slug'
     | '/api/public/hooks/campaigns-cron'
     | '/api/public/v1/sms'
@@ -608,18 +609,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ActualitesSlugRouteImport
       parentRoute: typeof ActualitesRoute
     }
-    '/_authenticated/dashboard': {
-      id: '/_authenticated/dashboard'
+    '/_authenticated/dashboard/': {
+      id: '/_authenticated/dashboard/'
       path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof AuthenticatedDashboardIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/admin': {
-      id: '/_authenticated/admin'
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
       path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/actualites/tag/$slug': {
@@ -638,87 +639,87 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/dashboard/settings': {
       id: '/_authenticated/dashboard/settings'
-      path: '/settings'
+      path: '/dashboard/settings'
       fullPath: '/dashboard/settings'
       preLoaderRoute: typeof AuthenticatedDashboardSettingsRouteImport
-      parentRoute: typeof AuthenticatedDashboardRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/dashboard/orders': {
       id: '/_authenticated/dashboard/orders'
-      path: '/orders'
+      path: '/dashboard/orders'
       fullPath: '/dashboard/orders'
       preLoaderRoute: typeof AuthenticatedDashboardOrdersRouteImport
-      parentRoute: typeof AuthenticatedDashboardRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/dashboard/campaigns': {
       id: '/_authenticated/dashboard/campaigns'
-      path: '/campaigns'
+      path: '/dashboard/campaigns'
       fullPath: '/dashboard/campaigns'
       preLoaderRoute: typeof AuthenticatedDashboardCampaignsRouteImport
-      parentRoute: typeof AuthenticatedDashboardRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/dashboard/api-keys': {
       id: '/_authenticated/dashboard/api-keys'
-      path: '/api-keys'
+      path: '/dashboard/api-keys'
       fullPath: '/dashboard/api-keys'
       preLoaderRoute: typeof AuthenticatedDashboardApiKeysRouteImport
-      parentRoute: typeof AuthenticatedDashboardRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/users': {
       id: '/_authenticated/admin/users'
-      path: '/users'
+      path: '/admin/users'
       fullPath: '/admin/users'
       preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/packages': {
       id: '/_authenticated/admin/packages'
-      path: '/packages'
+      path: '/admin/packages'
       fullPath: '/admin/packages'
       preLoaderRoute: typeof AuthenticatedAdminPackagesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/orders': {
       id: '/_authenticated/admin/orders'
-      path: '/orders'
+      path: '/admin/orders'
       fullPath: '/admin/orders'
       preLoaderRoute: typeof AuthenticatedAdminOrdersRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/news-categories': {
       id: '/_authenticated/admin/news-categories'
-      path: '/news-categories'
+      path: '/admin/news-categories'
       fullPath: '/admin/news-categories'
       preLoaderRoute: typeof AuthenticatedAdminNewsCategoriesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/news': {
       id: '/_authenticated/admin/news'
-      path: '/news'
+      path: '/admin/news'
       fullPath: '/admin/news'
       preLoaderRoute: typeof AuthenticatedAdminNewsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/hero': {
       id: '/_authenticated/admin/hero'
-      path: '/hero'
+      path: '/admin/hero'
       fullPath: '/admin/hero'
       preLoaderRoute: typeof AuthenticatedAdminHeroRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/contacts': {
       id: '/_authenticated/admin/contacts'
-      path: '/contacts'
+      path: '/admin/contacts'
       fullPath: '/admin/contacts'
       preLoaderRoute: typeof AuthenticatedAdminContactsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/campaigns': {
       id: '/_authenticated/admin/campaigns'
-      path: '/campaigns'
+      path: '/admin/campaigns'
       fullPath: '/admin/campaigns'
       preLoaderRoute: typeof AuthenticatedAdminCampaignsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/api/public/webhooks/nmgroupe': {
       id: '/api/public/webhooks/nmgroupe'
@@ -757,15 +758,15 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/dashboard/checkout/$slug': {
       id: '/_authenticated/dashboard/checkout/$slug'
-      path: '/checkout/$slug'
+      path: '/dashboard/checkout/$slug'
       fullPath: '/dashboard/checkout/$slug'
       preLoaderRoute: typeof AuthenticatedDashboardCheckoutSlugRouteImport
-      parentRoute: typeof AuthenticatedDashboardRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
   }
 }
 
-interface AuthenticatedAdminRouteChildren {
+interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminCampaignsRoute: typeof AuthenticatedAdminCampaignsRoute
   AuthenticatedAdminContactsRoute: typeof AuthenticatedAdminContactsRoute
   AuthenticatedAdminHeroRoute: typeof AuthenticatedAdminHeroRoute
@@ -774,9 +775,16 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminOrdersRoute: typeof AuthenticatedAdminOrdersRoute
   AuthenticatedAdminPackagesRoute: typeof AuthenticatedAdminPackagesRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
+  AuthenticatedDashboardApiKeysRoute: typeof AuthenticatedDashboardApiKeysRoute
+  AuthenticatedDashboardCampaignsRoute: typeof AuthenticatedDashboardCampaignsRoute
+  AuthenticatedDashboardOrdersRoute: typeof AuthenticatedDashboardOrdersRoute
+  AuthenticatedDashboardSettingsRoute: typeof AuthenticatedDashboardSettingsRoute
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
+  AuthenticatedDashboardCheckoutSlugRoute: typeof AuthenticatedDashboardCheckoutSlugRoute
 }
 
-const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminCampaignsRoute: AuthenticatedAdminCampaignsRoute,
   AuthenticatedAdminContactsRoute: AuthenticatedAdminContactsRoute,
   AuthenticatedAdminHeroRoute: AuthenticatedAdminHeroRoute,
@@ -785,42 +793,14 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminOrdersRoute: AuthenticatedAdminOrdersRoute,
   AuthenticatedAdminPackagesRoute: AuthenticatedAdminPackagesRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
-}
-
-const AuthenticatedAdminRouteWithChildren =
-  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
-
-interface AuthenticatedDashboardRouteChildren {
-  AuthenticatedDashboardApiKeysRoute: typeof AuthenticatedDashboardApiKeysRoute
-  AuthenticatedDashboardCampaignsRoute: typeof AuthenticatedDashboardCampaignsRoute
-  AuthenticatedDashboardOrdersRoute: typeof AuthenticatedDashboardOrdersRoute
-  AuthenticatedDashboardSettingsRoute: typeof AuthenticatedDashboardSettingsRoute
-  AuthenticatedDashboardCheckoutSlugRoute: typeof AuthenticatedDashboardCheckoutSlugRoute
-}
-
-const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
-  {
-    AuthenticatedDashboardApiKeysRoute: AuthenticatedDashboardApiKeysRoute,
-    AuthenticatedDashboardCampaignsRoute: AuthenticatedDashboardCampaignsRoute,
-    AuthenticatedDashboardOrdersRoute: AuthenticatedDashboardOrdersRoute,
-    AuthenticatedDashboardSettingsRoute: AuthenticatedDashboardSettingsRoute,
-    AuthenticatedDashboardCheckoutSlugRoute:
-      AuthenticatedDashboardCheckoutSlugRoute,
-  }
-
-const AuthenticatedDashboardRouteWithChildren =
-  AuthenticatedDashboardRoute._addFileChildren(
-    AuthenticatedDashboardRouteChildren,
-  )
-
-interface AuthenticatedRouteRouteChildren {
-  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
-  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRouteWithChildren
-}
-
-const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
-  AuthenticatedDashboardRoute: AuthenticatedDashboardRouteWithChildren,
+  AuthenticatedDashboardApiKeysRoute: AuthenticatedDashboardApiKeysRoute,
+  AuthenticatedDashboardCampaignsRoute: AuthenticatedDashboardCampaignsRoute,
+  AuthenticatedDashboardOrdersRoute: AuthenticatedDashboardOrdersRoute,
+  AuthenticatedDashboardSettingsRoute: AuthenticatedDashboardSettingsRoute,
+  AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
+  AuthenticatedDashboardCheckoutSlugRoute:
+    AuthenticatedDashboardCheckoutSlugRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -875,3 +855,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
