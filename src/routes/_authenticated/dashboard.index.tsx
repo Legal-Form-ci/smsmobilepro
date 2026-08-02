@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { listCampaigns } from "@/lib/campaigns.functions";
 import { listOrders } from "@/lib/orders.functions";
 
-export const Route = createFileRoute("/_authenticated/dashboard")({
+export const Route = createFileRoute("/_authenticated/dashboard/")({
   component: DashboardHome,
   head: () => ({ meta: [{ title: "Espace client — SMS Pro Mobile" }, { name: "robots", content: "noindex" }] }),
 });

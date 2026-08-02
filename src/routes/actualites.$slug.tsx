@@ -37,6 +37,38 @@ export const Route = createFileRoute("/actualites/$slug")({
           : []),
       ],
       links: [{ rel: "canonical", href: url }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "NewsArticle",
+            headline: p.title,
+            description: desc,
+            datePublished: p.published_at ?? undefined,
+            dateModified: p.updated_at ?? p.published_at ?? undefined,
+            image: p.cover_image_url ? [p.cover_image_url] : undefined,
+            mainEntityOfPage: { "@type": "WebPage", "@id": url },
+            publisher: {
+              "@type": "Organization",
+              name: "SMS Pro Mobile",
+              url: "https://smsmobilepro.lovable.app",
+            },
+          }),
+        },
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Accueil", item: "https://smsmobilepro.lovable.app/" },
+              { "@type": "ListItem", position: 2, name: "Actualités", item: "https://smsmobilepro.lovable.app/actualites" },
+              { "@type": "ListItem", position: 3, name: p.title, item: url },
+            ],
+          }),
+        },
+      ],
     };
   },
 });

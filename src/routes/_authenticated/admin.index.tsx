@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { listAdminOverview } from "@/lib/admin.functions";
 import { fetchRoles } from "@/lib/auth";
 
-export const Route = createFileRoute("/_authenticated/admin")({
+export const Route = createFileRoute("/_authenticated/admin/")({
   beforeLoad: async () => {
     const { data } = await supabase.auth.getUser();
     if (!data.user) throw redirect({ to: "/auth" });
