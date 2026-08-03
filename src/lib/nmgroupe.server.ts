@@ -15,6 +15,13 @@ type SendResult = {
   error?: string;
 };
 
+/** Mock mode: no external gateway configured (or explicitly forced) → simulate sends
+ *  so the client and admin dashboards stay fully functional with test data. */
+function isMockMode() {
+  if (process.env.SMS_MOCK_MODE === "true") return true;
+  return !process.env.NMGROUPE_API_URL || !process.env.NMGROUPE_API_KEY;
+}
+
 async function sendSingleSms(params: {
   to: string;
   from: string;
@@ -22,9 +29,17 @@ async function sendSingleSms(params: {
 }): Promise<SendResult> {
   const apiUrl = process.env.NMGROUPE_API_URL;
   const apiKey = process.env.NMGROUPE_API_KEY;
+  if (isMockMode()) {
+    // Simulated gateway: ~95% success, deterministic-ish fake message id.
+    const ok = Math.random() > 0.05;
+    return ok
+      ? { status: "sent", provider_message_id: `mock_${Date.now()}_${params.to.slice(-4)}` }
+      : { status: "failed", error: "Simulation: numéro injoignable" };
+  }
   if (!apiUrl || !apiKey) {
     return { status: "failed", error: "NM Groupe non configuré (clés API manquantes)" };
   }
+
   try {
     const res = await fetch(apiUrl, {
       method: "POST",
