@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { DashboardLayout } from "@/components/dashboard-chrome";
 import { AdminToolbar } from "@/components/admin-toolbar";
@@ -8,6 +8,11 @@ import { listCampaignsAdmin, deleteCampaign } from "@/lib/admin.functions";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin/campaigns")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    q: typeof search['q'] === "string" ? (search['q'] as string) : "",
+    status: typeof search['status'] === "string" ? (search['status'] as string) : "all",
+    page: Number(search['page']) > 0 ? Number(search['page']) : 1,
+  }),
   beforeLoad: async () => {
     const { data } = await supabase.auth.getUser();
     if (!data.user) throw redirect({ to: "/auth" });
@@ -20,7 +25,13 @@ export const Route = createFileRoute("/_authenticated/admin/campaigns")({
 
 function CampaignsAdmin() {
   const qc = useQueryClient();
+  const { q, status, page } = Route.useSearch();
+  const navigate = useNavigate({ from: Route.fullPath });
+  const setSearch = (patch: Record<string, unknown>) =>
+    navigate({ search: (prev) => ({ ...prev, ...patch }) });
+
   const { data: campaigns = [] } = useQuery({ queryKey: ["admin-campaigns"], queryFn: () => listCampaignsAdmin() });
+  const rows = status === "all" ? campaigns : campaigns.filter((c: any) => c.status === status);
   const del = useMutation({
     mutationFn: (id: string) => deleteCampaign({ data: { id } }),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-campaigns"] }); toast.success("Supprimée"); },
@@ -30,7 +41,26 @@ function CampaignsAdmin() {
     <DashboardLayout title="Toutes les campagnes">
       <AdminToolbar
         title="Campagnes"
-        rows={campaigns}
+        rows={rows}
+        search={q}
+        onSearchChange={(v) => setSearch({ q: v, page: 1 })}
+        page={page}
+        onPageChange={(p) => setSearch({ page: p })}
+        filters={
+          <select
+            value={status}
+            onChange={(e) => setSearch({ status: e.target.value, page: 1 })}
+            className="text-sm px-3 py-2 border border-border rounded-sm bg-background"
+          >
+            <option value="all">Tous les statuts</option>
+            <option value="draft">Brouillon</option>
+            <option value="scheduled">Planifiée</option>
+            <option value="recurring">Récurrente</option>
+            <option value="sending">En cours</option>
+            <option value="sent">Envoyée</option>
+            <option value="failed">Échouée</option>
+          </select>
+        }
         mapRow={(c: any) => ({
           date: c.created_at,
           nom: c.name,
@@ -44,6 +74,7 @@ function CampaignsAdmin() {
         })}
         searchKeys={["name", "sender_id", "status", "message"]}
       >
+
         {({ rows }) => (
           <div className="bg-background border border-border rounded-sm">
             {rows.map((c: any) => (
