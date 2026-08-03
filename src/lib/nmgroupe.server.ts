@@ -74,6 +74,7 @@ export async function sendCampaignViaNMGroupe(campaignId: string, userId: string
 
   await supabaseAdmin.from("campaigns").update({ status: "sending" }).eq("id", campaignId);
 
+  const mock = isMockMode();
   const recipients = (camp.recipients as string[]) ?? [];
   let sent = 0;
   let failed = 0;
@@ -101,9 +102,10 @@ export async function sendCampaignViaNMGroupe(campaignId: string, userId: string
       sent++;
       await supabaseAdmin.from("sms_messages")
         .update({
-          status: "sent",
+          status: mock ? "delivered" : "sent",
           provider_message_id: res.provider_message_id ?? null,
           sent_at: new Date().toISOString(),
+          ...(mock ? { delivered_at: new Date().toISOString() } : {}),
         })
         .eq("campaign_id", campaignId).eq("phone", phone).eq("status", "pending");
     }
@@ -120,6 +122,7 @@ export async function sendCampaignViaNMGroupe(campaignId: string, userId: string
     status: failed === recipients.length ? "failed" : "sent",
     sent_count: sent,
     failed_count: failed,
+    ...(mock ? { delivered_count: sent } : {}),
   }).eq("id", campaignId);
 
   return { sent, failed, total: recipients.length };
