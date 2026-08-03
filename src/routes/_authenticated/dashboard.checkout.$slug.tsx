@@ -24,15 +24,19 @@ function CheckoutPage() {
   const pay = useMutation({
     mutationFn: () => initiatePayment({ data: { package_slug: slug, provider } }),
     onSuccess: (r: any) => {
-      if (r.session?.payment_url) {
+      if (r.session?.mock) {
+        toast.success("Mode simulation : commande confirmée et crédits ajoutés.");
+        navigate({ to: "/dashboard/orders", search: { status: "all", q: "" } });
+      } else if (r.session?.payment_url) {
         window.location.href = r.session.payment_url;
       } else if (!r.session?.configured) {
         toast.error(r.session?.message ?? "Paiement non configuré");
-        navigate({ to: "/dashboard/orders" });
+        navigate({ to: "/dashboard/orders", search: { status: "all", q: "" } });
       } else {
         toast.error(r.session?.message ?? "Erreur d'initialisation");
       }
     },
+
     onError: (e: any) => toast.error(e.message),
   });
 
