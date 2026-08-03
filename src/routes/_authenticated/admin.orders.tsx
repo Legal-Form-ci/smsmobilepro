@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { DashboardLayout } from "@/components/dashboard-chrome";
 import { AdminToolbar } from "@/components/admin-toolbar";
@@ -8,6 +8,12 @@ import { listOrdersAdmin, updateOrderStatus } from "@/lib/admin.functions";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin/orders")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    q: typeof search['q'] === "string" ? (search['q'] as string) : "",
+    status: typeof search['status'] === "string" ? (search['status'] as string) : "all",
+    provider: typeof search['provider'] === "string" ? (search['provider'] as string) : "all",
+    page: Number(search['page']) > 0 ? Number(search['page']) : 1,
+  }),
   beforeLoad: async () => {
     const { data } = await supabase.auth.getUser();
     if (!data.user) throw redirect({ to: "/auth" });
@@ -20,7 +26,15 @@ export const Route = createFileRoute("/_authenticated/admin/orders")({
 
 function OrdersAdmin() {
   const qc = useQueryClient();
+  const { q, status, provider, page } = Route.useSearch();
+  const navigate = useNavigate({ from: Route.fullPath });
+  const setSearch = (patch: Record<string, unknown>) =>
+    navigate({ search: (prev: any) => ({ ...prev, ...patch }) });
+
   const { data: orders = [] } = useQuery({ queryKey: ["admin-orders"], queryFn: () => listOrdersAdmin() });
+  const rows = orders.filter((o: any) =>
+    (status === "all" || o.status === status) &&
+    (provider === "all" || (o.provider ?? "") === provider));
   const upd = useMutation({
     mutationFn: (v: { id: string; status: any }) => updateOrderStatus({ data: v }),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-orders"] }); toast.success("Statut mis à jour"); },
@@ -30,7 +44,29 @@ function OrdersAdmin() {
     <DashboardLayout title="Toutes les commandes">
       <AdminToolbar
         title="Commandes"
-        rows={orders}
+        rows={rows}
+        search={q}
+        onSearchChange={(v) => setSearch({ q: v, page: 1 })}
+        page={page}
+        onPageChange={(p) => setSearch({ page: p })}
+        filters={
+          <>
+            <select value={status} onChange={(e) => setSearch({ status: e.target.value, page: 1 })}
+              className="text-sm px-3 py-2 border border-border rounded-sm bg-background">
+              <option value="all">Tous les statuts</option>
+              <option value="pending">pending</option>
+              <option value="paid">paid</option>
+              <option value="failed">failed</option>
+              <option value="cancelled">cancelled</option>
+            </select>
+            <select value={provider} onChange={(e) => setSearch({ provider: e.target.value, page: 1 })}
+              className="text-sm px-3 py-2 border border-border rounded-sm bg-background">
+              <option value="all">Tous les providers</option>
+              <option value="cinetpay">cinetpay</option>
+              <option value="fedapay">fedapay</option>
+            </select>
+          </>
+        }
         mapRow={(o: any) => ({
           date: o.created_at,
           client: o.profiles?.email,
@@ -41,6 +77,7 @@ function OrdersAdmin() {
         })}
         searchKeys={["status", "provider"]}
       >
+
         {({ rows }) => (
           <div className="bg-background border border-border rounded-sm overflow-x-auto">
             <table className="w-full text-sm min-w-[700px]">
