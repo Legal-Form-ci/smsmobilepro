@@ -73,14 +73,21 @@ function CampaignsPage() {
   return (
     <DashboardLayout title="Campagnes SMS">
       <div className="flex justify-between items-center mb-4 flex-wrap gap-3">
-        <div className="flex gap-1 flex-wrap text-xs">
-          {(["all", "draft", "scheduled", "recurring", "sent", "history"] as Tab[]).map((t) => (
-            <button key={t} onClick={() => setTab(t)}
+        <div className="flex gap-1 flex-wrap items-center text-xs">
+          {TABS.map((t) => (
+            <button key={t} onClick={() => setSearch({ tab: t })}
               className={`px-3 py-1.5 rounded-sm font-semibold uppercase tracking-wider ${tab === t ? "bg-foreground text-background" : "bg-background border border-border hover:border-primary"}`}>
               {labelFor(t)} {t !== "history" && counts[t as keyof typeof counts] !== undefined && <span className="opacity-60">({counts[t as keyof typeof counts]})</span>}
             </button>
           ))}
+          <input
+            value={q}
+            onChange={(e) => setSearch({ q: e.target.value })}
+            placeholder="Rechercher…"
+            className="px-3 py-1.5 border border-border rounded-sm bg-background min-w-[160px]"
+          />
         </div>
+
         <button onClick={() => { setEditing(null); setShowForm(true); }}
           className="bg-primary text-primary-foreground px-4 py-2 rounded-sm text-sm font-semibold hover:bg-primary-dark">
           + Nouvelle campagne
