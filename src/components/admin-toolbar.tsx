@@ -57,12 +57,16 @@ export function AdminToolbar<T extends Record<string, any>>({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center gap-2 justify-between">
-        <input
-          value={q}
-          onChange={(e) => { setQ(e.target.value); setPage(1); }}
-          placeholder="Rechercher…"
-          className="text-sm px-3 py-2 border border-border rounded-sm bg-background min-w-[220px]"
-        />
+        <div className="flex flex-wrap items-center gap-2">
+          <input
+            value={q}
+            onChange={(e) => { setQ(e.target.value); setPage(1); }}
+            placeholder="Rechercher…"
+            className="text-sm px-3 py-2 border border-border rounded-sm bg-background min-w-[220px]"
+          />
+          {filters}
+        </div>
+
         <div className="flex items-center gap-2">
           <span className="text-xs font-mono text-foreground/60">{filtered.length} résultat(s)</span>
           <button onClick={() => doExport("csv")} className="text-xs font-semibold px-3 py-2 border border-border rounded-sm hover:bg-muted">
