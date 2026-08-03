@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { DashboardLayout } from "@/components/dashboard-chrome";
@@ -8,16 +8,24 @@ import {
 } from "@/lib/campaigns.functions";
 import { toast } from "sonner";
 
+const TABS = ["all", "draft", "scheduled", "recurring", "sent", "history"] as const;
+type Tab = (typeof TABS)[number];
+
 export const Route = createFileRoute("/_authenticated/dashboard/campaigns")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    tab: TABS.includes(search['tab'] as Tab) ? (search['tab'] as Tab) : ("all" as Tab),
+    q: typeof search['q'] === "string" ? (search['q'] as string) : "",
+  }),
   component: CampaignsPage,
   head: () => ({ meta: [{ title: "Campagnes SMS — SMS Pro Mobile" }, { name: "robots", content: "noindex" }] }),
 });
 
-type Tab = "all" | "draft" | "scheduled" | "recurring" | "sent" | "history";
-
 function CampaignsPage() {
   const qc = useQueryClient();
-  const [tab, setTab] = useState<Tab>("all");
+  const { tab, q } = Route.useSearch();
+  const navigate = useNavigate({ from: Route.fullPath });
+  const setSearch = (patch: Record<string, unknown>) =>
+    navigate({ search: (prev: any) => ({ ...prev, ...patch }) });
   const [editing, setEditing] = useState<any | null>(null);
   const [showForm, setShowForm] = useState(false);
 
@@ -30,9 +38,15 @@ function CampaignsPage() {
   });
 
   const filtered = useMemo(() => {
-    if (tab === "all" || tab === "history") return campaigns;
-    return campaigns.filter((c: any) => c.status === tab);
-  }, [campaigns, tab]);
+    const needle = q.trim().toLowerCase();
+    let list = tab === "all" || tab === "history" ? campaigns : campaigns.filter((c: any) => c.status === tab);
+    if (needle) {
+      list = list.filter((c: any) =>
+        [c.name, c.sender_id, c.message].some((v: string) => (v ?? "").toLowerCase().includes(needle)));
+    }
+    return list;
+  }, [campaigns, tab, q]);
+
 
   const send = useMutation({
     mutationFn: (id: string) => sendCampaign({ data: { id } }),
@@ -59,14 +73,21 @@ function CampaignsPage() {
   return (
     <DashboardLayout title="Campagnes SMS">
       <div className="flex justify-between items-center mb-4 flex-wrap gap-3">
-        <div className="flex gap-1 flex-wrap text-xs">
-          {(["all", "draft", "scheduled", "recurring", "sent", "history"] as Tab[]).map((t) => (
-            <button key={t} onClick={() => setTab(t)}
+        <div className="flex gap-1 flex-wrap items-center text-xs">
+          {TABS.map((t) => (
+            <button key={t} onClick={() => setSearch({ tab: t })}
               className={`px-3 py-1.5 rounded-sm font-semibold uppercase tracking-wider ${tab === t ? "bg-foreground text-background" : "bg-background border border-border hover:border-primary"}`}>
               {labelFor(t)} {t !== "history" && counts[t as keyof typeof counts] !== undefined && <span className="opacity-60">({counts[t as keyof typeof counts]})</span>}
             </button>
           ))}
+          <input
+            value={q}
+            onChange={(e) => setSearch({ q: e.target.value })}
+            placeholder="Rechercher…"
+            className="px-3 py-1.5 border border-border rounded-sm bg-background min-w-[160px]"
+          />
         </div>
+
         <button onClick={() => { setEditing(null); setShowForm(true); }}
           className="bg-primary text-primary-foreground px-4 py-2 rounded-sm text-sm font-semibold hover:bg-primary-dark">
           + Nouvelle campagne

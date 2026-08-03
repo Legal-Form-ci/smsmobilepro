@@ -7,12 +7,29 @@ interface Props<T> {
   mapRow: (r: T) => Record<string, any>;
   searchKeys?: (keyof T | string)[];
   pageSize?: number;
+  /** Controlled search value (e.g. from URL search params). */
+  search?: string;
+  onSearchChange?: (value: string) => void;
+  /** Controlled page number (1-based, e.g. from URL search params). */
+  page?: number;
+  onPageChange?: (page: number) => void;
+  /** Extra controls (filters) rendered next to the search input. */
+  filters?: React.ReactNode;
   children: (view: { rows: T[]; page: number; totalPages: number; setPage: (n: number) => void }) => React.ReactNode;
 }
 
-export function AdminToolbar<T extends Record<string, any>>({ title, rows, mapRow, searchKeys, pageSize = 25, children }: Props<T>) {
-  const [q, setQ] = useState("");
-  const [page, setPage] = useState(1);
+export function AdminToolbar<T extends Record<string, any>>({
+  title, rows, mapRow, searchKeys, pageSize = 25, children,
+  search, onSearchChange, page: pageProp, onPageChange, filters,
+}: Props<T>) {
+  const [qLocal, setQLocal] = useState("");
+  const [pageLocal, setPageLocal] = useState(1);
+
+  const q = search ?? qLocal;
+  const page = pageProp ?? pageLocal;
+  const setQ = (v: string) => (onSearchChange ? onSearchChange(v) : setQLocal(v));
+  const setPage = (n: number) => (onPageChange ? onPageChange(n) : setPageLocal(n));
+
 
   const filtered = useMemo(() => {
     if (!q.trim()) return rows;
@@ -40,12 +57,16 @@ export function AdminToolbar<T extends Record<string, any>>({ title, rows, mapRo
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center gap-2 justify-between">
-        <input
-          value={q}
-          onChange={(e) => { setQ(e.target.value); setPage(1); }}
-          placeholder="Rechercher…"
-          className="text-sm px-3 py-2 border border-border rounded-sm bg-background min-w-[220px]"
-        />
+        <div className="flex flex-wrap items-center gap-2">
+          <input
+            value={q}
+            onChange={(e) => { setQ(e.target.value); setPage(1); }}
+            placeholder="Rechercher…"
+            className="text-sm px-3 py-2 border border-border rounded-sm bg-background min-w-[220px]"
+          />
+          {filters}
+        </div>
+
         <div className="flex items-center gap-2">
           <span className="text-xs font-mono text-foreground/60">{filtered.length} résultat(s)</span>
           <button onClick={() => doExport("csv")} className="text-xs font-semibold px-3 py-2 border border-border rounded-sm hover:bg-muted">
