@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { DashboardLayout } from "@/components/dashboard-chrome";
@@ -8,16 +8,24 @@ import {
 } from "@/lib/campaigns.functions";
 import { toast } from "sonner";
 
+const TABS = ["all", "draft", "scheduled", "recurring", "sent", "history"] as const;
+type Tab = (typeof TABS)[number];
+
 export const Route = createFileRoute("/_authenticated/dashboard/campaigns")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    tab: TABS.includes(search['tab'] as Tab) ? (search['tab'] as Tab) : ("all" as Tab),
+    q: typeof search['q'] === "string" ? (search['q'] as string) : "",
+  }),
   component: CampaignsPage,
   head: () => ({ meta: [{ title: "Campagnes SMS — SMS Pro Mobile" }, { name: "robots", content: "noindex" }] }),
 });
 
-type Tab = "all" | "draft" | "scheduled" | "recurring" | "sent" | "history";
-
 function CampaignsPage() {
   const qc = useQueryClient();
-  const [tab, setTab] = useState<Tab>("all");
+  const { tab, q } = Route.useSearch();
+  const navigate = useNavigate({ from: Route.fullPath });
+  const setSearch = (patch: Record<string, unknown>) =>
+    navigate({ search: (prev: any) => ({ ...prev, ...patch }) });
   const [editing, setEditing] = useState<any | null>(null);
   const [showForm, setShowForm] = useState(false);
 
@@ -30,9 +38,15 @@ function CampaignsPage() {
   });
 
   const filtered = useMemo(() => {
-    if (tab === "all" || tab === "history") return campaigns;
-    return campaigns.filter((c: any) => c.status === tab);
-  }, [campaigns, tab]);
+    const needle = q.trim().toLowerCase();
+    let list = tab === "all" || tab === "history" ? campaigns : campaigns.filter((c: any) => c.status === tab);
+    if (needle) {
+      list = list.filter((c: any) =>
+        [c.name, c.sender_id, c.message].some((v: string) => (v ?? "").toLowerCase().includes(needle)));
+    }
+    return list;
+  }, [campaigns, tab, q]);
+
 
   const send = useMutation({
     mutationFn: (id: string) => sendCampaign({ data: { id } }),
