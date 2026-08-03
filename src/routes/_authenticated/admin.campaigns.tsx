@@ -28,7 +28,7 @@ function CampaignsAdmin() {
   const { q, status, page } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
   const setSearch = (patch: Record<string, unknown>) =>
-    navigate({ search: (prev) => ({ ...prev, ...patch }) });
+    navigate({ search: (prev: any) => ({ ...prev, ...patch }) });
 
   const { data: campaigns = [] } = useQuery({ queryKey: ["admin-campaigns"], queryFn: () => listCampaignsAdmin() });
   const rows = status === "all" ? campaigns : campaigns.filter((c: any) => c.status === status);
