@@ -19,11 +19,29 @@ export async function createPaymentSession(p: Params): Promise<{
   payment_url?: string;
   transaction_id?: string;
   configured: boolean;
+  mock?: boolean;
   message?: string;
 }> {
   const base = process.env.APP_PUBLIC_URL ?? "https://smsmobilepro.lovable.app";
   const returnUrl = `${base}/dashboard/orders?order=${p.orderId}`;
   const notifyUrl = `${base}/api/public/webhooks/${p.provider}`;
+
+  // Mock mode: no Mobile Money credentials configured (or explicitly forced).
+  // The order is confirmed locally so the dashboards remain fully usable with test data.
+  const mockForced = process.env.PAYMENTS_MOCK_MODE === "true";
+  const cinetpayReady = !!(process.env.CINETPAY_API_KEY && process.env.CINETPAY_SITE_ID);
+  const fedapayReady = !!process.env.FEDAPAY_SECRET_KEY;
+  const ready = p.provider === "cinetpay" ? cinetpayReady : fedapayReady;
+  if (mockForced || !ready) {
+    return {
+      provider: p.provider,
+      configured: false,
+      mock: true,
+      transaction_id: `mock_${p.orderId}`,
+      payment_url: `${returnUrl}&mock=1`,
+      message: "Mode simulation : paiement confirmé automatiquement (aucun débit réel).",
+    };
+  }
 
   if (p.provider === "cinetpay") {
     const apiKey = process.env.CINETPAY_API_KEY;
