@@ -53,8 +53,19 @@ export function AdminToolbar<T extends Record<string, any>>({
     const mapped = filtered.map(mapRow);
     const fname = `${title.toLowerCase().replace(/\s+/g, "-")}-${new Date().toISOString().slice(0, 10)}`;
     if (fmt === "csv") exportCSV(`${fname}.csv`, mapped);
-    else exportPDF(title, mapped);
+    else exportPDF(`${title} — filtres appliqués`, mapped);
   };
+
+  const doShare = async () => {
+    const url = typeof window !== "undefined" ? window.location.href : "";
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success("Lien copié — il conserve vos filtres actuels");
+    } catch {
+      window.prompt("Copiez ce lien :", url);
+    }
+  };
+
 
   return (
     <div className="flex flex-col gap-4">
