@@ -497,6 +497,96 @@ export type Database = {
         }
         Relationships: []
       }
+      signup_applications: {
+        Row: {
+          admin_notes: string | null
+          city: string | null
+          civility: string | null
+          client_type: string
+          client_type_other: string | null
+          country: string
+          created_at: string
+          documents: Json
+          email: string
+          first_name: string
+          id: string
+          id_document_type: string | null
+          is_legal_representative: boolean
+          job_title: string | null
+          last_name: string
+          mobile: string
+          package_slug: string | null
+          representative: Json
+          reviewed_at: string | null
+          reviewed_by: string | null
+          sample_message: string | null
+          sender_id: string
+          status: string
+          structure: string | null
+          updated_at: string
+          user_id: string | null
+          website: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          city?: string | null
+          civility?: string | null
+          client_type: string
+          client_type_other?: string | null
+          country: string
+          created_at?: string
+          documents?: Json
+          email: string
+          first_name: string
+          id?: string
+          id_document_type?: string | null
+          is_legal_representative?: boolean
+          job_title?: string | null
+          last_name: string
+          mobile: string
+          package_slug?: string | null
+          representative?: Json
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          sample_message?: string | null
+          sender_id: string
+          status?: string
+          structure?: string | null
+          updated_at?: string
+          user_id?: string | null
+          website?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          city?: string | null
+          civility?: string | null
+          client_type?: string
+          client_type_other?: string | null
+          country?: string
+          created_at?: string
+          documents?: Json
+          email?: string
+          first_name?: string
+          id?: string
+          id_document_type?: string | null
+          is_legal_representative?: boolean
+          job_title?: string | null
+          last_name?: string
+          mobile?: string
+          package_slug?: string | null
+          representative?: Json
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          sample_message?: string | null
+          sender_id?: string
+          status?: string
+          structure?: string | null
+          updated_at?: string
+          user_id?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
       sms_messages: {
         Row: {
           campaign_id: string | null
@@ -549,6 +639,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      system_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value?: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {

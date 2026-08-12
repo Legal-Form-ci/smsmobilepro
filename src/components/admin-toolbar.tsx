@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 import { exportCSV, exportPDF } from "@/lib/export-csv";
+
 
 interface Props<T> {
   title: string;
@@ -51,8 +53,19 @@ export function AdminToolbar<T extends Record<string, any>>({
     const mapped = filtered.map(mapRow);
     const fname = `${title.toLowerCase().replace(/\s+/g, "-")}-${new Date().toISOString().slice(0, 10)}`;
     if (fmt === "csv") exportCSV(`${fname}.csv`, mapped);
-    else exportPDF(title, mapped);
+    else exportPDF(`${title} — filtres appliqués`, mapped);
   };
+
+  const doShare = async () => {
+    const url = typeof window !== "undefined" ? window.location.href : "";
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success("Lien copié — il conserve vos filtres actuels");
+    } catch {
+      window.prompt("Copiez ce lien :", url);
+    }
+  };
+
 
   return (
     <div className="flex flex-col gap-4">
@@ -67,8 +80,11 @@ export function AdminToolbar<T extends Record<string, any>>({
           {filters}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs font-mono text-foreground/60">{filtered.length} résultat(s)</span>
+          <button onClick={doShare} className="text-xs font-semibold px-3 py-2 border border-border rounded-sm hover:bg-muted">
+            Partager
+          </button>
           <button onClick={() => doExport("csv")} className="text-xs font-semibold px-3 py-2 border border-border rounded-sm hover:bg-muted">
             Exporter CSV
           </button>
@@ -76,6 +92,7 @@ export function AdminToolbar<T extends Record<string, any>>({
             Exporter PDF
           </button>
         </div>
+
       </div>
       {children({ rows: pageRows, page: safePage, totalPages, setPage })}
       {totalPages > 1 && (
