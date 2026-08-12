@@ -35,7 +35,7 @@ function DashboardHome() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 mb-8">
-        <Link to="/dashboard/campaigns" className="p-5 bg-background border border-border rounded-sm hover:border-primary transition-colors">
+        <Link to="/dashboard/campaigns" search={{ q: "", tab: "all", page: 1 }} className="p-5 bg-background border border-border rounded-sm hover:border-primary transition-colors">
           <div className="text-[10px] font-mono uppercase tracking-widest text-foreground/50">Action</div>
           <div className="font-display font-bold text-lg mt-1">Nouvelle campagne</div>
           <p className="text-sm text-foreground/60 mt-2">Créez et envoyez une campagne SMS à vos contacts.</p>
