@@ -33,6 +33,8 @@ import { Route as AuthenticatedDashboardOrdersRouteImport } from './routes/_auth
 import { Route as AuthenticatedDashboardCampaignsRouteImport } from './routes/_authenticated/dashboard.campaigns'
 import { Route as AuthenticatedDashboardApiKeysRouteImport } from './routes/_authenticated/dashboard.api-keys'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
+import { Route as AuthenticatedAdminSignupsRouteImport } from './routes/_authenticated/admin.signups'
+import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAdminPackagesRouteImport } from './routes/_authenticated/admin.packages'
 import { Route as AuthenticatedAdminOrdersRouteImport } from './routes/_authenticated/admin.orders'
 import { Route as AuthenticatedAdminNewsCategoriesRouteImport } from './routes/_authenticated/admin.news-categories'
@@ -171,6 +173,18 @@ const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
   path: '/admin/users',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminSignupsRoute =
+  AuthenticatedAdminSignupsRouteImport.update({
+    id: '/admin/signups',
+    path: '/admin/signups',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminSettingsRoute =
+  AuthenticatedAdminSettingsRouteImport.update({
+    id: '/admin/settings',
+    path: '/admin/settings',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminPackagesRoute =
   AuthenticatedAdminPackagesRouteImport.update({
     id: '/admin/packages',
@@ -269,6 +283,8 @@ export interface FileRoutesByFullPath {
   '/admin/news-categories': typeof AuthenticatedAdminNewsCategoriesRoute
   '/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/admin/packages': typeof AuthenticatedAdminPackagesRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/signups': typeof AuthenticatedAdminSignupsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/dashboard/api-keys': typeof AuthenticatedDashboardApiKeysRoute
   '/dashboard/campaigns': typeof AuthenticatedDashboardCampaignsRoute
@@ -307,6 +323,8 @@ export interface FileRoutesByTo {
   '/admin/news-categories': typeof AuthenticatedAdminNewsCategoriesRoute
   '/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/admin/packages': typeof AuthenticatedAdminPackagesRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/signups': typeof AuthenticatedAdminSignupsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/dashboard/api-keys': typeof AuthenticatedDashboardApiKeysRoute
   '/dashboard/campaigns': typeof AuthenticatedDashboardCampaignsRoute
@@ -347,6 +365,8 @@ export interface FileRoutesById {
   '/_authenticated/admin/news-categories': typeof AuthenticatedAdminNewsCategoriesRoute
   '/_authenticated/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/_authenticated/admin/packages': typeof AuthenticatedAdminPackagesRoute
+  '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/_authenticated/admin/signups': typeof AuthenticatedAdminSignupsRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/dashboard/api-keys': typeof AuthenticatedDashboardApiKeysRoute
   '/_authenticated/dashboard/campaigns': typeof AuthenticatedDashboardCampaignsRoute
@@ -387,6 +407,8 @@ export interface FileRouteTypes {
     | '/admin/news-categories'
     | '/admin/orders'
     | '/admin/packages'
+    | '/admin/settings'
+    | '/admin/signups'
     | '/admin/users'
     | '/dashboard/api-keys'
     | '/dashboard/campaigns'
@@ -425,6 +447,8 @@ export interface FileRouteTypes {
     | '/admin/news-categories'
     | '/admin/orders'
     | '/admin/packages'
+    | '/admin/settings'
+    | '/admin/signups'
     | '/admin/users'
     | '/dashboard/api-keys'
     | '/dashboard/campaigns'
@@ -464,6 +488,8 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/news-categories'
     | '/_authenticated/admin/orders'
     | '/_authenticated/admin/packages'
+    | '/_authenticated/admin/settings'
+    | '/_authenticated/admin/signups'
     | '/_authenticated/admin/users'
     | '/_authenticated/dashboard/api-keys'
     | '/_authenticated/dashboard/campaigns'
@@ -672,6 +698,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/signups': {
+      id: '/_authenticated/admin/signups'
+      path: '/admin/signups'
+      fullPath: '/admin/signups'
+      preLoaderRoute: typeof AuthenticatedAdminSignupsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/settings': {
+      id: '/_authenticated/admin/settings'
+      path: '/admin/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/packages': {
       id: '/_authenticated/admin/packages'
       path: '/admin/packages'
@@ -774,6 +814,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminNewsCategoriesRoute: typeof AuthenticatedAdminNewsCategoriesRoute
   AuthenticatedAdminOrdersRoute: typeof AuthenticatedAdminOrdersRoute
   AuthenticatedAdminPackagesRoute: typeof AuthenticatedAdminPackagesRoute
+  AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
+  AuthenticatedAdminSignupsRoute: typeof AuthenticatedAdminSignupsRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedDashboardApiKeysRoute: typeof AuthenticatedDashboardApiKeysRoute
   AuthenticatedDashboardCampaignsRoute: typeof AuthenticatedDashboardCampaignsRoute
@@ -792,6 +834,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminNewsCategoriesRoute: AuthenticatedAdminNewsCategoriesRoute,
   AuthenticatedAdminOrdersRoute: AuthenticatedAdminOrdersRoute,
   AuthenticatedAdminPackagesRoute: AuthenticatedAdminPackagesRoute,
+  AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
+  AuthenticatedAdminSignupsRoute: AuthenticatedAdminSignupsRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedDashboardApiKeysRoute: AuthenticatedDashboardApiKeysRoute,
   AuthenticatedDashboardCampaignsRoute: AuthenticatedDashboardCampaignsRoute,
