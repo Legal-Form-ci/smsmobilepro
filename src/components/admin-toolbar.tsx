@@ -80,8 +80,11 @@ export function AdminToolbar<T extends Record<string, any>>({
           {filters}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs font-mono text-foreground/60">{filtered.length} résultat(s)</span>
+          <button onClick={doShare} className="text-xs font-semibold px-3 py-2 border border-border rounded-sm hover:bg-muted">
+            Partager
+          </button>
           <button onClick={() => doExport("csv")} className="text-xs font-semibold px-3 py-2 border border-border rounded-sm hover:bg-muted">
             Exporter CSV
           </button>
@@ -89,6 +92,7 @@ export function AdminToolbar<T extends Record<string, any>>({
             Exporter PDF
           </button>
         </div>
+
       </div>
       {children({ rows: pageRows, page: safePage, totalPages, setPage })}
       {totalPages > 1 && (

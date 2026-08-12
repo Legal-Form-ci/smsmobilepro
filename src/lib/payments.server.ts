@@ -28,11 +28,12 @@ export async function createPaymentSession(p: Params): Promise<{
 
   // Mock mode: no Mobile Money credentials configured (or explicitly forced).
   // The order is confirmed locally so the dashboards remain fully usable with test data.
-  const mockForced = process.env.PAYMENTS_MOCK_MODE === "true";
+  const { readMockSettings } = await import("./settings.server");
+  const mockForced = (await readMockSettings()).payments === true;
   const cinetpayReady = !!(process.env.CINETPAY_API_KEY && process.env.CINETPAY_SITE_ID);
   const fedapayReady = !!process.env.FEDAPAY_SECRET_KEY;
   const ready = p.provider === "cinetpay" ? cinetpayReady : fedapayReady;
-  if (mockForced || !ready) {
+  if (mockForced) {
     return {
       provider: p.provider,
       configured: false,

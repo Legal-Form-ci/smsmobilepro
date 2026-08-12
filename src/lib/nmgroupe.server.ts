@@ -17,9 +17,10 @@ type SendResult = {
 
 /** Mock mode: no external gateway configured (or explicitly forced) → simulate sends
  *  so the client and admin dashboards stay fully functional with test data. */
-function isMockMode() {
-  if (process.env.SMS_MOCK_MODE === "true") return true;
-  return !process.env.NMGROUPE_API_URL || !process.env.NMGROUPE_API_KEY;
+async function isMockMode() {
+  const { readMockSettings } = await import("./settings.server");
+  const settings = await readMockSettings();
+  return settings.sms === true;
 }
 
 async function sendSingleSms(params: {
@@ -29,7 +30,7 @@ async function sendSingleSms(params: {
 }): Promise<SendResult> {
   const apiUrl = process.env.NMGROUPE_API_URL;
   const apiKey = process.env.NMGROUPE_API_KEY;
-  if (isMockMode()) {
+  if (await isMockMode()) {
     // Simulated gateway: ~95% success, deterministic-ish fake message id.
     const ok = Math.random() > 0.05;
     return ok
@@ -74,7 +75,7 @@ export async function sendCampaignViaNMGroupe(campaignId: string, userId: string
 
   await supabaseAdmin.from("campaigns").update({ status: "sending" }).eq("id", campaignId);
 
-  const mock = isMockMode();
+  const mock = await isMockMode();
   const recipients = (camp.recipients as string[]) ?? [];
   let sent = 0;
   let failed = 0;
