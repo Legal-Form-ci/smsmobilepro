@@ -30,8 +30,8 @@ function SignupsAdmin() {
   const qc = useQueryClient();
   const { q, status, page } = Route.useSearch();
   const navigate = Route.useNavigate();
-  const setSearch = (patch: Record<string, unknown>) =>
-    navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, ...patch }) });
+  const setSearch = (patch: Partial<{ q: string; status: string; page: number }>) =>
+    navigate({ search: (prev) => ({ ...prev, ...patch }) });
   const [openId, setOpenId] = useState<string | null>(null);
 
   const { data: apps = [] } = useQuery({ queryKey: ["admin-signups"], queryFn: () => listSignupApplications() });
