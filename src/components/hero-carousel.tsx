@@ -122,7 +122,7 @@ export function HeroCarousel({ context = "all" }: { context?: "all" | "sms" | "e
       {current.kind === "uemoa" && (
         <div className="absolute top-4 left-4 max-w-[calc(100%-6rem)] rounded-sm bg-background/90 px-3 py-2 shadow-sm" aria-label="Pays de la CEDEAO">
           <div className="flex flex-wrap gap-1 text-base leading-none" title="Bénin, Burkina Faso, Cabo Verde, Côte d’Ivoire, Gambie, Ghana, Guinée, Guinée-Bissau, Liberia, Mali, Niger, Nigeria, Sénégal, Sierra Leone, Togo">
-            {Array.from("🇧🇯🇧🇫🇨🇻🇨🇮🇬🇲🇬🇭🇬🇳🇬🇼🇱🇷🇲🇱🇳🇪🇳🇬🇸🇳🇸🇱🇹🇬").map((flag, index) => <span key={`${flag}-${index}`}>{flag}</span>)}
+            {["🇧🇯", "🇧🇫", "🇨🇻", "🇨🇮", "🇬🇲", "🇬🇭", "🇬🇳", "🇬🇼", "🇱🇷", "🇲🇱", "🇳🇪", "🇳🇬", "🇸🇳", "🇸🇱", "🇹🇬"].map((flag) => <span key={flag}>{flag}</span>)}
           </div>
         </div>
       )}
