@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { listPublishedNews, listActiveHeroSlides } from "@/lib/news.functions";
 import heroSms from "@/assets/hero-sms-1.jpg";
 import heroEmail from "@/assets/hero-email-1.jpg";
-import heroUemoa from "@/assets/hero-uemoa.jpg";
+import heroCedeao from "@/assets/hero-cedeao-realistic.jpg";
 import heroMoney from "@/assets/hero-mobile-money.jpg";
 
 type Slide = {
@@ -23,7 +23,7 @@ type Slide = {
 const DEFAULT_SLIDES: Slide[] = [
   { key: "sms", kind: "sms", src: heroSms, eyebrow: "SMS Marketing", title: "Vos promos livrées en 3 secondes", subtitle: "98,2% de délivrabilité sur les 8 pays UEMOA.", href: "/solutions", cta: "Découvrir" },
   { key: "money", kind: "money", src: heroMoney, eyebrow: "Mobile Money", title: "Alertes de paiement instantanées", subtitle: "Orange Money, MTN MoMo, Wave, Moov.", href: "/solutions", cta: "Voir les cas d'usage" },
-  { key: "uemoa", kind: "uemoa", src: heroUemoa, eyebrow: "Zone UEMOA", title: "8 pays. Une seule plateforme.", subtitle: "Côte d'Ivoire, Sénégal, Mali, Burkina, Bénin, Togo, Niger, Guinée-Bissau.", href: "/tarifs", cta: "Voir les tarifs" },
+  { key: "uemoa", kind: "uemoa", src: heroCedeao, eyebrow: "Zone CEDEAO", title: "L'Afrique de l'Ouest connectée.", subtitle: "Les marchés de la CEDEAO réunis sur une plateforme professionnelle.", href: "/tarifs", cta: "Voir les tarifs" },
   { key: "email", kind: "email", src: heroEmail, eyebrow: "Omnicanal", title: "SMS + Email + WhatsApp", subtitle: "Pilotez toutes vos campagnes depuis un seul dashboard.", href: "/solutions", cta: "Explorer" },
 ];
 
