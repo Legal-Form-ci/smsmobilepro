@@ -19,28 +19,11 @@ export async function createPaymentSession(p: Params): Promise<{
   payment_url?: string;
   transaction_id?: string;
   configured: boolean;
-  mock?: boolean;
   message?: string;
 }> {
   const base = process.env.APP_PUBLIC_URL ?? "https://smsmobilepro.lovable.app";
   const returnUrl = `${base}/dashboard/orders?order=${p.orderId}`;
   const notifyUrl = `${base}/api/public/webhooks/${p.provider}`;
-
-  // Mode simulation : activable uniquement par un administrateur (Paramètres système)
-  // ou via la variable d'environnement PAYMENTS_MOCK_MODE. Désactivé en production.
-  const { readMockSettings } = await import("./settings.server");
-  const mockForced = (await readMockSettings()).payments === true;
-  if (mockForced) {
-
-    return {
-      provider: p.provider,
-      configured: false,
-      mock: true,
-      transaction_id: `mock_${p.orderId}`,
-      payment_url: `${returnUrl}&mock=1`,
-      message: "Mode simulation : paiement confirmé automatiquement (aucun débit réel).",
-    };
-  }
 
   if (p.provider === "cinetpay") {
     const apiKey = process.env.CINETPAY_API_KEY;

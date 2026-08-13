@@ -111,14 +111,21 @@ export function HeroCarousel({ context = "all" }: { context?: "all" | "sms" | "e
           src={s.src}
           alt={s.title}
           loading={i === 0 ? "eager" : "lazy"}
-          width={1024}
-          height={1024}
+          width={s.src === heroCedeao ? 1536 : 1024}
+          height={s.src === heroCedeao ? 1536 : 1024}
           className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
             i === idx ? "opacity-100" : "opacity-0"
           }`}
         />
       ))}
       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+      {current.kind === "uemoa" && (
+        <div className="absolute top-4 left-4 max-w-[calc(100%-6rem)] rounded-sm bg-background/90 px-3 py-2 shadow-sm" aria-label="Pays de la CEDEAO">
+          <div className="flex flex-wrap gap-1 text-base leading-none" title="Bénin, Burkina Faso, Cabo Verde, Côte d’Ivoire, Gambie, Ghana, Guinée, Guinée-Bissau, Liberia, Mali, Niger, Nigeria, Sénégal, Sierra Leone, Togo">
+            {Array.from("🇧🇯🇧🇫🇨🇻🇨🇮🇬🇲🇬🇭🇬🇳🇬🇼🇱🇷🇲🇱🇳🇪🇳🇬🇸🇳🇸🇱🇹🇬").map((flag, index) => <span key={`${flag}-${index}`}>{flag}</span>)}
+          </div>
+        </div>
+      )}
       <div className="absolute inset-x-0 bottom-0 p-5 sm:p-7 text-white">
         <div className="inline-flex items-center gap-2 px-2 py-1 bg-primary/90 rounded-full mb-3">
           <span className="text-[10px] font-mono uppercase tracking-widest font-bold">

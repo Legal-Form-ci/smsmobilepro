@@ -15,14 +15,6 @@ type SendResult = {
   error?: string;
 };
 
-/** Mock mode: no external gateway configured (or explicitly forced) → simulate sends
- *  so the client and admin dashboards stay fully functional with test data. */
-async function isMockMode() {
-  const { readMockSettings } = await import("./settings.server");
-  const settings = await readMockSettings();
-  return settings.sms === true;
-}
-
 async function sendSingleSms(params: {
   to: string;
   from: string;
@@ -30,13 +22,6 @@ async function sendSingleSms(params: {
 }): Promise<SendResult> {
   const apiUrl = process.env.NMGROUPE_API_URL;
   const apiKey = process.env.NMGROUPE_API_KEY;
-  if (await isMockMode()) {
-    // Simulated gateway: ~95% success, deterministic-ish fake message id.
-    const ok = Math.random() > 0.05;
-    return ok
-      ? { status: "sent", provider_message_id: `mock_${Date.now()}_${params.to.slice(-4)}` }
-      : { status: "failed", error: "Simulation: numéro injoignable" };
-  }
   if (!apiUrl || !apiKey) {
     return { status: "failed", error: "NM Groupe non configuré (clés API manquantes)" };
   }
@@ -75,7 +60,6 @@ export async function sendCampaignViaNMGroupe(campaignId: string, userId: string
 
   await supabaseAdmin.from("campaigns").update({ status: "sending" }).eq("id", campaignId);
 
-  const mock = await isMockMode();
   const recipients = (camp.recipients as string[]) ?? [];
   let sent = 0;
   let failed = 0;
@@ -103,10 +87,9 @@ export async function sendCampaignViaNMGroupe(campaignId: string, userId: string
       sent++;
       await supabaseAdmin.from("sms_messages")
         .update({
-          status: mock ? "delivered" : "sent",
+          status: "sent",
           provider_message_id: res.provider_message_id ?? null,
           sent_at: new Date().toISOString(),
-          ...(mock ? { delivered_at: new Date().toISOString() } : {}),
         })
         .eq("campaign_id", campaignId).eq("phone", phone).eq("status", "pending");
     }
@@ -123,7 +106,6 @@ export async function sendCampaignViaNMGroupe(campaignId: string, userId: string
     status: failed === recipients.length ? "failed" : "sent",
     sent_count: sent,
     failed_count: failed,
-    ...(mock ? { delivered_count: sent } : {}),
   }).eq("id", campaignId);
 
   return { sent, failed, total: recipients.length };

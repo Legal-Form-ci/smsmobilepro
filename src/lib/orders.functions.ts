@@ -41,18 +41,5 @@ export const initiatePayment = createServerFn({ method: "POST" })
       provider: data.provider,
       description: `Package ${pkg.name} — ${pkg.sms_volume} SMS`,
     });
-    if (session.mock) {
-      // Simulated payment: confirm the order and credit the account immediately.
-      await context.supabase.from("orders")
-        .update({ status: "paid", provider_transaction_id: session.transaction_id ?? null })
-        .eq("id", order.id).eq("user_id", context.userId);
-      const { data: prof } = await context.supabase
-        .from("profiles").select("sms_credits").eq("id", context.userId).maybeSingle();
-      await context.supabase.from("profiles")
-        .update({ sms_credits: (prof?.sms_credits ?? 0) + pkg.sms_volume })
-        .eq("id", context.userId);
-      return { order: { ...order, status: "paid" }, session };
-    }
-
     return { order, session };
   });

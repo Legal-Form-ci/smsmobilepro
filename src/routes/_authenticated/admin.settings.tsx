@@ -1,10 +1,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { DashboardLayout } from "@/components/dashboard-chrome";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchRoles } from "@/lib/auth";
-import { getMockMode, setMockMode } from "@/lib/settings.functions";
-import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin/settings")({
   beforeLoad: async () => {
@@ -18,79 +15,20 @@ export const Route = createFileRoute("/_authenticated/admin/settings")({
 });
 
 function AdminSettings() {
-  const qc = useQueryClient();
-  const { data } = useQuery({ queryKey: ["mock-mode"], queryFn: () => getMockMode() });
-  const save = useMutation({
-    mutationFn: (v: { sms: boolean; payments: boolean }) => setMockMode({ data: v }),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["mock-mode"] });
-      toast.success("Paramètres enregistrés");
-    },
-    onError: (e: Error) => toast.error(e.message),
-  });
-
-  const sms = data?.sms ?? false;
-  const payments = data?.payments ?? false;
-  const anyMock = sms || payments;
-
   return (
     <DashboardLayout title="Paramètres système">
-      <div
-        className={`mb-6 p-4 rounded-sm border text-sm ${
-          anyMock ? "bg-primary/10 border-primary text-foreground" : "bg-background border-border"
-        }`}
-      >
-        <div className="font-display font-bold">
-          {anyMock ? "⚠ Mode simulation ACTIF — données non réelles" : "✔ Mode production — envois et paiements réels"}
-        </div>
+      <div className="mb-6 p-4 rounded-sm border border-success bg-success/10 text-sm">
+        <div className="font-display font-bold">Mode production actif</div>
         <p className="text-foreground/60 mt-1">
-          En production, aucun SMS ni paiement n'est simulé. Le mode simulation ne doit servir
-          qu'aux tests internes.
+          Les campagnes utilisent exclusivement la passerelle NM Groupe et les commandes les prestataires Mobile Money configurés. Aucune donnée simulée n'est générée.
         </p>
       </div>
-
-      <div className="bg-background border border-border rounded-sm divide-y divide-border">
-        <Toggle
-          label="Mode simulation SMS (API NM Groupe)"
-          description="Les envois de campagnes sont simulés, aucun SMS réel n'est expédié."
-          checked={sms}
-          onChange={(v) => save.mutate({ sms: v, payments })}
-        />
-        <Toggle
-          label="Mode simulation paiements (Mobile Money)"
-          description="Les commandes sont confirmées sans débit réel."
-          checked={payments}
-          onChange={(v) => save.mutate({ sms, payments: v })}
-        />
+      <div className="bg-background border border-border rounded-sm p-5 text-sm space-y-2">
+        <h2 className="font-display font-bold text-lg">Services externes</h2>
+        <p>SMS : NM Groupe, statuts de livraison reçus par webhook sécurisé.</p>
+        <p>Paiements : CinetPay et FedaPay, confirmation automatique par webhook signé.</p>
+        <p className="text-foreground/60">Une configuration absente bloque l'opération au lieu de produire un faux résultat.</p>
       </div>
     </DashboardLayout>
-  );
-}
-
-function Toggle({
-  label, description, checked, onChange,
-}: { label: string; description: string; checked: boolean; onChange: (v: boolean) => void }) {
-  return (
-    <label className="flex items-start justify-between gap-4 p-5 cursor-pointer">
-      <span>
-        <span className="font-semibold block">{label}</span>
-        <span className="text-sm text-foreground/60">{description}</span>
-      </span>
-      <span className="shrink-0 pt-1">
-        <input
-          type="checkbox"
-          className="sr-only peer"
-          checked={checked}
-          onChange={(e) => onChange(e.target.checked)}
-        />
-        <span className="block h-6 w-11 rounded-full bg-muted border border-border relative transition-colors peer-checked:bg-primary">
-          <span
-            className={`absolute top-0.5 h-4 w-4 rounded-full bg-background transition-all ${
-              checked ? "left-6" : "left-0.5"
-            }`}
-          />
-        </span>
-      </span>
-    </label>
   );
 }
