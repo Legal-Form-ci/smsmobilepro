@@ -30,15 +30,15 @@ function SignupsAdmin() {
   const qc = useQueryClient();
   const { q, status, page } = Route.useSearch();
   const navigate = Route.useNavigate();
-  const setSearch = (patch: Record<string, unknown>) =>
-    navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, ...patch }) });
+  const setSearch = (patch: Partial<{ q: string; status: string; page: number }>) =>
+    navigate({ search: (prev) => ({ ...prev, ...patch }) });
   const [openId, setOpenId] = useState<string | null>(null);
 
   const { data: apps = [] } = useQuery({ queryKey: ["admin-signups"], queryFn: () => listSignupApplications() });
   const rows = (apps as Record<string, any>[]).filter((a) => status === "all" || a['status'] === status);
 
   const review = useMutation({
-    mutationFn: (v: { id: string; status: "pending" | "approved" | "rejected" }) =>
+    mutationFn: (v: { id: string; status: "pending" | "approved" | "rejected"; documents_validation_status: "pending" | "valid" | "rejected" }) =>
       reviewSignupApplication({ data: v }),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-signups"] }); toast.success("Dossier mis à jour"); },
     onError: (e: Error) => toast.error(e.message),
@@ -99,11 +99,11 @@ function SignupsAdmin() {
                       className="text-xs px-3 py-1.5 border border-border rounded-sm hover:bg-muted">
                       Détails
                     </button>
-                    <button onClick={() => review.mutate({ id: a['id'], status: "approved" })}
+                    <button onClick={() => review.mutate({ id: a['id'], status: "approved", documents_validation_status: "valid" })}
                       className="text-xs px-3 py-1.5 bg-primary text-primary-foreground rounded-sm">
                       Valider
                     </button>
-                    <button onClick={() => review.mutate({ id: a['id'], status: "rejected" })}
+                    <button onClick={() => review.mutate({ id: a['id'], status: "rejected", documents_validation_status: "rejected" })}
                       className="text-xs px-3 py-1.5 border border-border rounded-sm hover:bg-muted">
                       Rejeter
                     </button>
@@ -119,6 +119,7 @@ function SignupsAdmin() {
                     <div>Pays / Ville : {a['country']} {a['city'] ? `· ${a['city']}` : ""}</div>
                     <div>Fonction : {a['job_title'] || "—"} · Site : {a['website'] || "—"}</div>
                     <div>Pack : {a['package_slug'] || "—"} · Pièce : {a['id_document_type'] || "—"}</div>
+                    <div>Contrôle documentaire : <b>{a['documents_validation_status'] || "pending"}</b> · Consentement RGPD : {a['gdpr_consent_at'] ? new Date(a['gdpr_consent_at']).toLocaleString("fr-FR") : "non enregistré"}</div>
                     <div>Exemple de message : {a['sample_message'] || "—"}</div>
                     <div>
                       Documents :

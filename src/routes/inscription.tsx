@@ -51,6 +51,7 @@ function SignupPage() {
   const [f, setF] = useState<Form>(EMPTY);
   const [files, setFiles] = useState<Record<string, File>>({});
   const [certified, setCertified] = useState(false);
+  const [gdprConsent, setGdprConsent] = useState(false);
   const [busy, setBusy] = useState(false);
 
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setF((p) => ({ ...p, [k]: v }));
@@ -62,10 +63,18 @@ function SignupPage() {
   );
   const docsId = useMemo<DocSpec[]>(() => representativeDocs(f.id_document_type), [f.id_document_type]);
 
-  function pick(key: string, file: File | null) {
+  async function pick(key: string, file: File | null) {
     if (!file) { setFiles((p) => { const n = { ...p }; delete n[key]; return n; }); return; }
     if (file.size > MAX_MB * 1024 * 1024) return toast.error(`Fichier trop volumineux (max ${MAX_MB} Mo)`);
-    if (!/(pdf|jpe?g|png)$/i.test(file.name)) return toast.error("Formats acceptés : PDF, JPG, PNG");
+    const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
+    if (!allowedTypes.includes(file.type) || !/\.(pdf|jpe?g|png)$/i.test(file.name)) return toast.error("Formats acceptés : PDF, JPG, PNG");
+    const bytes = new Uint8Array(await file.slice(0, 8).arrayBuffer());
+    const validSignature = file.type === "application/pdf"
+      ? String.fromCharCode(...bytes.slice(0, 5)) === "%PDF-"
+      : file.type === "image/png"
+        ? bytes.slice(0, 8).every((byte, index) => byte === [137, 80, 78, 71, 13, 10, 26, 10][index])
+        : bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
+    if (!validSignature) return toast.error("Le contenu du fichier ne correspond pas à son format.");
     setFiles((p) => ({ ...p, [key]: file }));
   }
 
@@ -86,7 +95,7 @@ function SignupPage() {
       if (missing.length) return `Pièce d'identité incomplète : ${missing.map((m) => m.label).join(", ")}`;
     }
     if (step === 4 && !certified) return "Veuillez certifier l'exactitude des informations.";
-    if (step === 5 && f.password.length < 8) return "Mot de passe : 8 caractères minimum.";
+    if (step === 5 && (f.password.length < 8 || !gdprConsent)) return "Mot de passe valide et consentement RGPD obligatoires.";
     return null;
   }
 
@@ -118,14 +127,14 @@ function SignupPage() {
       }
 
       const allDocs = [...docsStructure, ...docsId];
-      const uploaded: { key: string; label: string; path: string; name: string }[] = [];
+       const uploaded: { key: string; label: string; path: string; name: string; size: number; mime_type: "application/pdf" | "image/jpeg" | "image/png" }[] = [];
       for (const d of allDocs) {
         const file = files[d.key];
         if (!file) continue;
         const path = `${uid}/${d.key}-${Date.now()}-${file.name.replace(/[^\w.\-]/g, "_")}`;
-        const { error } = await supabase.storage.from("kyc-documents").upload(path, file, { upsert: true });
+        const { error } = await supabase.storage.from("kyc-documents").upload(path, file, { contentType: file.type, upsert: false });
         if (error) throw new Error(`Upload ${d.label} : ${error.message}`);
-        uploaded.push({ key: d.key, label: d.label, path, name: file.name });
+        uploaded.push({ key: d.key, label: d.label, path, name: file.name, size: file.size, mime_type: file.type as "application/pdf" | "image/jpeg" | "image/png" });
       }
 
       await submitSignupApplication({
@@ -144,6 +153,8 @@ function SignupPage() {
                 email: f.rep_email, mobile: f.rep_mobile,
               },
           documents: uploaded,
+          certified: true,
+          gdpr_consent: true,
         },
       });
 
@@ -328,6 +339,10 @@ function SignupPage() {
                   <Link to="/conditions" className="underline">conditions d'utilisation</Link> et notre{" "}
                   <Link to="/confidentialite" className="underline">politique de confidentialité</Link> (RGPD).
                 </p>
+                <label className="flex items-start gap-2 text-sm">
+                  <input type="checkbox" checked={gdprConsent} onChange={(e) => setGdprConsent(e.target.checked)} className="mt-1" />
+                  <span>J'accepte le traitement strictement nécessaire de mes données et pièces KYC pour créer et sécuriser mon compte.</span>
+                </label>
               </div>
             )}
 

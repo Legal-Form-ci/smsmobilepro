@@ -40,6 +40,21 @@ export const listExecutions = createServerFn({ method: "GET" })
     return rows ?? [];
   });
 
+export const listCampaignMessages = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .validator((d) => z.object({ campaign_id: z.string().uuid(), limit: z.number().int().min(1).max(500).default(200) }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: messages, error } = await context.supabase
+      .from("sms_messages")
+      .select("id, phone, status, error, sent_at, delivered_at, created_at")
+      .eq("campaign_id", data.campaign_id)
+      .eq("user_id", context.userId)
+      .order("created_at", { ascending: false })
+      .limit(data.limit);
+    if (error) throw error;
+    return messages ?? [];
+  });
+
 /* --------- CREATE / UPDATE --------- */
 
 export const upsertCampaign = createServerFn({ method: "POST" })

@@ -1,12 +1,13 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DashboardLayout } from "@/components/dashboard-chrome";
 import {
-  listCampaigns, listExecutions, upsertCampaign, sendCampaign,
+  listCampaigns, listExecutions, listCampaignMessages, upsertCampaign, sendCampaign,
   deleteCampaign, duplicateCampaign,
 } from "@/lib/campaigns.functions";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const TABS = ["all", "draft", "scheduled", "recurring", "sent", "history"] as const;
 type Tab = (typeof TABS)[number];
@@ -28,6 +29,7 @@ function CampaignsPage() {
     navigate({ search: (prev: any) => ({ ...prev, ...patch }) });
   const [editing, setEditing] = useState<any | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [trackingId, setTrackingId] = useState<string | null>(null);
 
   const { data: campaigns = [], isLoading } = useQuery({
     queryKey: ["campaigns"], queryFn: () => listCampaigns(),
@@ -36,6 +38,25 @@ function CampaignsPage() {
     queryKey: ["executions"], queryFn: () => listExecutions({ data: {} }),
     enabled: tab === "history",
   });
+  const { data: messages = [], isLoading: messagesLoading } = useQuery({
+    queryKey: ["campaign-messages", trackingId],
+    queryFn: () => listCampaignMessages({ data: { campaign_id: trackingId ?? "", limit: 200 } }),
+    enabled: Boolean(trackingId),
+  });
+
+  useEffect(() => {
+    const channel = supabase
+      .channel("campaign-delivery-live")
+      .on("postgres_changes", { event: "*", schema: "public", table: "campaigns" }, () => {
+        qc.invalidateQueries({ queryKey: ["campaigns"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "sms_messages" }, (payload) => {
+        const row = (payload.new ?? payload.old) as { campaign_id?: string };
+        if (row.campaign_id) qc.invalidateQueries({ queryKey: ["campaign-messages", row.campaign_id] });
+      })
+      .subscribe();
+    return () => { void supabase.removeChannel(channel); };
+  }, [qc]);
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
@@ -130,6 +151,10 @@ function CampaignsPage() {
                   <div className="text-xs text-foreground/50 mt-2 font-mono">✓ {c.delivered_count}/{c.sent_count} · ✗ {c.failed_count}</div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
+                  <button onClick={() => setTrackingId(trackingId === c.id ? null : c.id)}
+                    className="px-3 py-1.5 text-xs font-semibold rounded-sm border border-border hover:border-primary">
+                    Suivi en direct
+                  </button>
                   {(c.status === "draft" || c.status === "scheduled" || c.status === "recurring") && (
                     <button onClick={() => send.mutate(c.id)} disabled={send.isPending}
                       className="bg-foreground text-background px-3 py-1.5 text-xs font-semibold rounded-sm hover:opacity-90 disabled:opacity-50">
@@ -149,11 +174,31 @@ function CampaignsPage() {
                   </button>
                 </div>
               </div>
+              {trackingId === c.id && <MessagesTable rows={messages} loading={messagesLoading} />}
             </div>
           ))}
         </div>
       )}
     </DashboardLayout>
+  );
+}
+
+function MessagesTable({ rows, loading }: { rows: any[]; loading: boolean }) {
+  return (
+    <div className="mt-4 border-t border-border pt-4 overflow-x-auto">
+      <div className="flex items-center gap-2 mb-3">
+        <span className="h-2 w-2 rounded-full bg-success animate-pulse" />
+        <h3 className="text-xs font-mono uppercase text-foreground/60">Statuts de livraison en temps réel</h3>
+      </div>
+      <table className="w-full min-w-[620px] text-xs">
+        <thead className="bg-muted"><tr><th className="p-2 text-left">Destinataire</th><th className="p-2 text-left">Statut</th><th className="p-2 text-left">Envoyé</th><th className="p-2 text-left">Livré</th><th className="p-2 text-left">Erreur</th></tr></thead>
+        <tbody>
+          {loading && <tr><td colSpan={5} className="p-4 text-center text-foreground/50">Chargement…</td></tr>}
+          {!loading && rows.length === 0 && <tr><td colSpan={5} className="p-4 text-center text-foreground/50">Aucun message enregistré.</td></tr>}
+          {rows.map((message) => <tr key={message.id} className="border-t border-border"><td className="p-2 font-mono">{message.phone}</td><td className="p-2"><StatusChip status={message.status} /></td><td className="p-2">{message.sent_at ? new Date(message.sent_at).toLocaleString("fr-FR") : "—"}</td><td className="p-2">{message.delivered_at ? new Date(message.delivered_at).toLocaleString("fr-FR") : "—"}</td><td className="p-2 text-destructive">{message.error || "—"}</td></tr>)}
+        </tbody>
+      </table>
+    </div>
   );
 }
 

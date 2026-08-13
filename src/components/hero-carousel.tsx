@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { listPublishedNews, listActiveHeroSlides } from "@/lib/news.functions";
 import heroSms from "@/assets/hero-sms-1.jpg";
 import heroEmail from "@/assets/hero-email-1.jpg";
-import heroUemoa from "@/assets/hero-uemoa.jpg";
+import heroCedeao from "@/assets/hero-cedeao-realistic.jpg";
 import heroMoney from "@/assets/hero-mobile-money.jpg";
 
 type Slide = {
@@ -23,7 +23,7 @@ type Slide = {
 const DEFAULT_SLIDES: Slide[] = [
   { key: "sms", kind: "sms", src: heroSms, eyebrow: "SMS Marketing", title: "Vos promos livrées en 3 secondes", subtitle: "98,2% de délivrabilité sur les 8 pays UEMOA.", href: "/solutions", cta: "Découvrir" },
   { key: "money", kind: "money", src: heroMoney, eyebrow: "Mobile Money", title: "Alertes de paiement instantanées", subtitle: "Orange Money, MTN MoMo, Wave, Moov.", href: "/solutions", cta: "Voir les cas d'usage" },
-  { key: "uemoa", kind: "uemoa", src: heroUemoa, eyebrow: "Zone UEMOA", title: "8 pays. Une seule plateforme.", subtitle: "Côte d'Ivoire, Sénégal, Mali, Burkina, Bénin, Togo, Niger, Guinée-Bissau.", href: "/tarifs", cta: "Voir les tarifs" },
+  { key: "uemoa", kind: "uemoa", src: heroCedeao, eyebrow: "Zone CEDEAO", title: "L'Afrique de l'Ouest connectée.", subtitle: "Les marchés de la CEDEAO réunis sur une plateforme professionnelle.", href: "/tarifs", cta: "Voir les tarifs" },
   { key: "email", kind: "email", src: heroEmail, eyebrow: "Omnicanal", title: "SMS + Email + WhatsApp", subtitle: "Pilotez toutes vos campagnes depuis un seul dashboard.", href: "/solutions", cta: "Explorer" },
 ];
 
@@ -111,14 +111,21 @@ export function HeroCarousel({ context = "all" }: { context?: "all" | "sms" | "e
           src={s.src}
           alt={s.title}
           loading={i === 0 ? "eager" : "lazy"}
-          width={1024}
-          height={1024}
+          width={s.src === heroCedeao ? 1536 : 1024}
+          height={s.src === heroCedeao ? 1536 : 1024}
           className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
             i === idx ? "opacity-100" : "opacity-0"
           }`}
         />
       ))}
       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+      {current.kind === "uemoa" && (
+        <div className="absolute top-4 left-4 max-w-[calc(100%-6rem)] rounded-sm bg-background/90 px-3 py-2 shadow-sm" aria-label="Pays de la CEDEAO">
+          <div className="flex flex-wrap gap-1 text-base leading-none" title="Bénin, Burkina Faso, Cabo Verde, Côte d’Ivoire, Gambie, Ghana, Guinée, Guinée-Bissau, Liberia, Mali, Niger, Nigeria, Sénégal, Sierra Leone, Togo">
+            {["🇧🇯", "🇧🇫", "🇨🇻", "🇨🇮", "🇬🇲", "🇬🇭", "🇬🇳", "🇬🇼", "🇱🇷", "🇲🇱", "🇳🇪", "🇳🇬", "🇸🇳", "🇸🇱", "🇹🇬"].map((flag) => <span key={flag}>{flag}</span>)}
+          </div>
+        </div>
+      )}
       <div className="absolute inset-x-0 bottom-0 p-5 sm:p-7 text-white">
         <div className="inline-flex items-center gap-2 px-2 py-1 bg-primary/90 rounded-full mb-3">
           <span className="text-[10px] font-mono uppercase tracking-widest font-bold">
