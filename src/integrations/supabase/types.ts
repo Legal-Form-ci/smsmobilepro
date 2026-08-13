@@ -500,6 +500,7 @@ export type Database = {
       signup_applications: {
         Row: {
           admin_notes: string | null
+          certified_at: string | null
           city: string | null
           civility: string | null
           client_type: string
@@ -507,8 +508,11 @@ export type Database = {
           country: string
           created_at: string
           documents: Json
+          documents_checked_at: string | null
+          documents_validation_status: string
           email: string
           first_name: string
+          gdpr_consent_at: string | null
           id: string
           id_document_type: string | null
           is_legal_representative: boolean
@@ -529,6 +533,7 @@ export type Database = {
         }
         Insert: {
           admin_notes?: string | null
+          certified_at?: string | null
           city?: string | null
           civility?: string | null
           client_type: string
@@ -536,8 +541,11 @@ export type Database = {
           country: string
           created_at?: string
           documents?: Json
+          documents_checked_at?: string | null
+          documents_validation_status?: string
           email: string
           first_name: string
+          gdpr_consent_at?: string | null
           id?: string
           id_document_type?: string | null
           is_legal_representative?: boolean
@@ -558,6 +566,7 @@ export type Database = {
         }
         Update: {
           admin_notes?: string | null
+          certified_at?: string | null
           city?: string | null
           civility?: string | null
           client_type?: string
@@ -565,8 +574,11 @@ export type Database = {
           country?: string
           created_at?: string
           documents?: Json
+          documents_checked_at?: string | null
+          documents_validation_status?: string
           email?: string
           first_name?: string
+          gdpr_consent_at?: string | null
           id?: string
           id_document_type?: string | null
           is_legal_representative?: boolean
