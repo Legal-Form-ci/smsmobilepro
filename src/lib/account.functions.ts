@@ -33,12 +33,18 @@ export const deleteMyAccount = createServerFn({ method: "POST" })
     const userId = context.userId;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
+    const { data: storedDocuments } = await supabaseAdmin.storage.from("kyc-documents").list(userId, { limit: 1000 });
+    if (storedDocuments?.length) {
+      await supabaseAdmin.storage.from("kyc-documents").remove(storedDocuments.map((document) => `${userId}/${document.name}`));
+    }
+
     // Belt & suspenders: explicit purge of app rows before deleting the auth user
     await supabaseAdmin.from("sms_messages").delete().eq("user_id", userId);
     await supabaseAdmin.from("campaign_executions").delete().eq("user_id", userId);
     await supabaseAdmin.from("campaigns").delete().eq("user_id", userId);
     await supabaseAdmin.from("api_keys").delete().eq("user_id", userId);
     await supabaseAdmin.from("orders").delete().eq("user_id", userId);
+    await supabaseAdmin.from("signup_applications").delete().eq("user_id", userId);
     await supabaseAdmin.from("user_roles").delete().eq("user_id", userId);
     await supabaseAdmin.from("profiles").delete().eq("id", userId);
 
